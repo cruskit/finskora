@@ -10,10 +10,7 @@ class App extends React.Component {
     this.state = {
       players: ['Seb', 'Ewan'],
       numTurns: 0,
-      turnScores: [ // Just putting in some dummy data for testing
-        [{ score: 5, total: 5 }],
-        [{ score: 10, total: 10 }]
-      ],
+      turnScores: [Array(0), Array(0)],
     };
   }
 
@@ -26,16 +23,21 @@ class App extends React.Component {
     const newState = JSON.parse(JSON.stringify(this.state));
 
     const turnScores = this.state.turnScores[currentPlayer];
-    const currentTotal = turnScores[turnScores.length - 1].total;
+    const currentTotal = turnScores.length === 0 ? 0 : turnScores[turnScores.length - 1].total;
 
     newState.turnScores[currentPlayer].push({
       score: userScore,
       total: currentTotal + userScore,
     });
     newState.numTurns = this.state.numTurns + 1;
-
+    newState.previousState = this.state;
 
     this.setState(newState);
+  }
+
+  handleUndo() {
+    console.log("Undoing last scoring action");
+    this.setState(this.state.previousState);
   }
 
   render() {
@@ -48,8 +50,12 @@ class App extends React.Component {
 
         </header>
         <div>
+          <LeaderBoard />
+        </div>
+        <div>
           <ScorePad
             onScoreEntered={(s) => this.handleScoreEntered(s)}
+            onUndo={() => this.handleUndo()}
           />
         </div>
         <div>
@@ -62,6 +68,19 @@ class App extends React.Component {
             scores={this.state.turnScores[1]}
           />
         </div>
+      </div>
+    );
+  }
+
+}
+
+class LeaderBoard extends React.Component {
+
+
+  render() {
+    return (
+      <div>
+        <p>LeaderBoard</p>
       </div>
     );
   }
@@ -82,11 +101,20 @@ function EntryButton(props) {
 class ScorePad extends React.Component {
 
   renderEntryButton(scoreValue) {
-
     return (
       <EntryButton
         onClick={() => this.props.onScoreEntered(scoreValue)}
         description={scoreValue}
+      />
+    );
+
+  }
+  
+  renderUndoButton() {
+    return (
+      <EntryButton
+        onClick={() => this.props.onUndo()}
+        description="Undo"
       />
     );
 
@@ -109,6 +137,7 @@ class ScorePad extends React.Component {
         {this.renderEntryButton(10)}
         {this.renderEntryButton(11)}
         {this.renderEntryButton(12)}
+        {this.renderUndoButton()}
       </div>
 
     );
@@ -123,7 +152,7 @@ class PlayerHistory extends React.Component {
 
       return (
         < li key={round} >
-          {scores.total} | {scores.score}
+          {scores.score} | {scores.total}
         </li >
       );
 
