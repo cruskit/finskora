@@ -1,6 +1,10 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Container from 'react-bootstrap/Container'
+import Navbar from 'react-bootstrap/Navbar'
+import Nav from 'react-bootstrap/Nav'
+import Button from 'react-bootstrap/Button'
 
 class App extends React.Component {
 
@@ -56,13 +60,13 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-        <header>
-          <p>
-            Scoreboard
-        </p>
+      <Container fluid>
+        <Navbar expand='true'>
+          <Navbar.Brand href="#home">Finskora</Navbar.Brand>
+          <Nav.Link href="#home">New Game</Nav.Link>
+        </Navbar>
 
-        </header>
+
         <div>
           <LeaderBoard
             playerNames={this.state.players}
@@ -87,7 +91,7 @@ class App extends React.Component {
             scores={this.state.turnScores[1]}
           />
         </div>
-      </div>
+      </Container>
     );
   }
 
@@ -112,7 +116,6 @@ class LeaderBoard extends React.Component {
   render() {
     return (
       <div>
-        <p>LeaderBoard</p>
         {this.renderScores()}
       </div>
     );
@@ -122,12 +125,13 @@ class LeaderBoard extends React.Component {
 
 function EntryButton(props) {
   return (
-    <button
+    <Button
       className="entryButton"
       onClick={props.onClick}
+      variant="primary btn-circle btn-md"
     >
       {props.description}
-    </button>
+    </Button>
   );
 }
 
@@ -147,7 +151,7 @@ class ScorePad extends React.Component {
     return (
       <EntryButton
         onClick={() => this.props.onUndo()}
-        description="Undo"
+        description={'\u238C'}
       />
     );
 
