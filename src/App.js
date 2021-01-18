@@ -13,6 +13,7 @@ class App extends React.Component {
       currentPlayer: 0,
       numTurns: 0,
       turnScores: [Array(0), Array(0)],
+      winner: -1,
     };
   }
 
@@ -26,9 +27,9 @@ class App extends React.Component {
 
     const turnScores = this.state.turnScores[currentPlayer];
     const currentTotal = turnScores.length === 0 ? 0 : turnScores[turnScores.length - 1].total;
-    
+
     let newTotal = currentTotal + userScore;
-    if (newTotal > 50){
+    if (newTotal > 50) {
       newTotal = 25;
     }
 
@@ -40,6 +41,10 @@ class App extends React.Component {
     newState.numTurns = this.state.numTurns + 1;
     newState.currentPlayer = newState.numTurns % newState.players.length;
     newState.previousState = this.state;
+
+    if (newTotal === 50) {
+      newState.winner = currentPlayer;
+    }
 
     this.setState(newState);
   }
@@ -59,10 +64,11 @@ class App extends React.Component {
 
         </header>
         <div>
-          <LeaderBoard 
+          <LeaderBoard
             playerNames={this.state.players}
             playerTotals={this.state.playerTotals}
             currentPlayer={this.state.currentPlayer}
+            winner={this.state.winner}
           />
         </div>
         <div>
@@ -89,12 +95,13 @@ class App extends React.Component {
 
 class LeaderBoard extends React.Component {
 
-  renderScores(){
+  renderScores() {
     const scores = this.props.playerNames.map((name, number) => {
       return (
         <div>
           <div>{name}</div>
           <div>{this.props.playerTotals[number]}</div>
+          <div>{this.props.winner === number ? 'Winner' : ''}</div>
         </div>
       );
     });
@@ -135,7 +142,7 @@ class ScorePad extends React.Component {
     );
 
   }
-  
+
   renderUndoButton() {
     return (
       <EntryButton
