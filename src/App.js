@@ -9,6 +9,8 @@ class App extends React.Component {
 
     this.state = {
       players: ['Seb', 'Ewan'],
+      playerTotals: [0, 0],
+      currentPlayer: 0,
       numTurns: 0,
       turnScores: [Array(0), Array(0)],
     };
@@ -24,12 +26,19 @@ class App extends React.Component {
 
     const turnScores = this.state.turnScores[currentPlayer];
     const currentTotal = turnScores.length === 0 ? 0 : turnScores[turnScores.length - 1].total;
+    
+    let newTotal = currentTotal + userScore;
+    if (newTotal > 50){
+      newTotal = 25;
+    }
 
     newState.turnScores[currentPlayer].push({
       score: userScore,
-      total: currentTotal + userScore,
+      total: newTotal,
     });
+    newState.playerTotals[currentPlayer] = newTotal;
     newState.numTurns = this.state.numTurns + 1;
+    newState.currentPlayer = newState.numTurns % newState.players.length;
     newState.previousState = this.state;
 
     this.setState(newState);
@@ -50,7 +59,11 @@ class App extends React.Component {
 
         </header>
         <div>
-          <LeaderBoard />
+          <LeaderBoard 
+            playerNames={this.state.players}
+            playerTotals={this.state.playerTotals}
+            currentPlayer={this.state.currentPlayer}
+          />
         </div>
         <div>
           <ScorePad
@@ -76,11 +89,24 @@ class App extends React.Component {
 
 class LeaderBoard extends React.Component {
 
+  renderScores(){
+    const scores = this.props.playerNames.map((name, number) => {
+      return (
+        <div>
+          <div>{name}</div>
+          <div>{this.props.playerTotals[number]}</div>
+        </div>
+      );
+    });
+
+    return scores;
+  }
 
   render() {
     return (
       <div>
         <p>LeaderBoard</p>
+        {this.renderScores()}
       </div>
     );
   }
