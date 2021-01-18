@@ -123,36 +123,28 @@ class LeaderBoard extends React.Component {
 
 }
 
-function EntryButton(props) {
-  return (
-    <Button
-      className="entryButton"
-      onClick={props.onClick}
-      variant="primary btn-circle btn-md"
-    >
-      {props.description}
-    </Button>
-  );
-}
-
 class ScorePad extends React.Component {
 
   renderEntryButton(scoreValue) {
     return (
-      <EntryButton
+      <Button
         onClick={() => this.props.onScoreEntered(scoreValue)}
-        description={scoreValue}
-      />
+        variant="primary btn-circle btn-md"
+      >
+        {scoreValue}
+      </Button>
     );
-
   }
 
   renderUndoButton() {
     return (
-      <EntryButton
+      <Button
         onClick={() => this.props.onUndo()}
-        description={'\u238C'}
-      />
+        variant="warning btn-circle btn-md"
+      >
+        &lt;-
+      </Button>
+
     );
 
   }
