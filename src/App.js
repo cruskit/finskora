@@ -1,10 +1,12 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Container from 'react-bootstrap/Container'
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import Button from 'react-bootstrap/Button'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import Table from 'react-bootstrap/Table'
 
 class App extends React.Component {
 
@@ -60,38 +62,42 @@ class App extends React.Component {
 
   render() {
     return (
-      <Container fluid>
-        <Navbar expand='true'>
+      <div>
+        <Navbar bg="light" expand='true'>
           <Navbar.Brand href="#home">Finskora</Navbar.Brand>
           <Nav.Link href="#home">New Game</Nav.Link>
         </Navbar>
 
+        <Container fluid>
 
-        <div>
           <LeaderBoard
             playerNames={this.state.players}
             playerTotals={this.state.playerTotals}
             currentPlayer={this.state.currentPlayer}
             winner={this.state.winner}
           />
-        </div>
-        <div>
+
           <ScorePad
             onScoreEntered={(s) => this.handleScoreEntered(s)}
             onUndo={() => this.handleUndo()}
           />
-        </div>
-        <div>
-          <PlayerHistory
-            player={this.state.players[0]}
-            scores={this.state.turnScores[0]}
-          />
-          <PlayerHistory
-            player={this.state.players[1]}
-            scores={this.state.turnScores[1]}
-          />
-        </div>
-      </Container>
+
+          <Row>
+            <Col>
+              <PlayerHistory
+                player={this.state.players[0]}
+                scores={this.state.turnScores[0]}
+              />
+            </Col>
+            <Col>
+              <PlayerHistory
+                player={this.state.players[1]}
+                scores={this.state.turnScores[1]}
+              />
+            </Col>
+          </Row>
+        </Container>
+      </div>
     );
   }
 
@@ -102,11 +108,19 @@ class LeaderBoard extends React.Component {
   renderScores() {
     const scores = this.props.playerNames.map((name, number) => {
       return (
-        <div>
-          <div>{name}</div>
-          <div>{this.props.playerTotals[number]}</div>
-          <div>{this.props.winner === number ? 'Winner' : ''}</div>
-        </div>
+        <Col>
+          <Row>
+            <Col>
+              {name}
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              {this.props.playerTotals[number]}
+              {this.props.winner === number ? 'Winner' : ''}
+            </Col>
+          </Row>
+        </Col>
       );
     });
 
@@ -115,9 +129,11 @@ class LeaderBoard extends React.Component {
 
   render() {
     return (
-      <div>
-        {this.renderScores()}
-      </div>
+      <Container fluid>
+        <Row className="text-center">
+          {this.renderScores()}
+        </Row>
+      </Container>
     );
   }
 
@@ -142,7 +158,7 @@ class ScorePad extends React.Component {
         onClick={() => this.props.onUndo()}
         variant="warning btn-circle btn-md"
       >
-        &lt;-
+        &lt;=
       </Button>
 
     );
@@ -180,9 +196,11 @@ class PlayerHistory extends React.Component {
     const scoreList = this.props.scores.map((scores, round) => {
 
       return (
-        < li key={round} >
-          {scores.score} | {scores.total}
-        </li >
+        <tr class="text-center">
+          <td>{round + 1}</td>
+          <td>{scores.score}</td>
+          <td>{scores.total}</td>
+        </tr>
       );
 
     });
@@ -192,10 +210,19 @@ class PlayerHistory extends React.Component {
   render() {
     return (
       <div>
-        <p>{this.props.player}</p>
-        <ul>
-          {this.renderScores()}
-        </ul>
+        <p class="text-center">{this.props.player}</p>
+        <Table bordered size="sm">
+          <thead>
+            <tr class="text-center">
+              <th>#</th>
+              <th>Score</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.renderScores()}
+          </tbody>
+        </Table>
 
       </div>
     );
