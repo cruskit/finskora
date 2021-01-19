@@ -63,9 +63,11 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <Navbar bg="light" expand='true'>
+        <Navbar bg="primary" variant="dark" expand='true'>
           <Navbar.Brand href="#home">Finskora</Navbar.Brand>
-          <Nav.Link href="#home">New Game</Nav.Link>
+          <Nav>
+          <Nav.Link href="#home" variant="dark">New Game</Nav.Link>
+          </Nav>
         </Navbar>
 
         <Container fluid>
