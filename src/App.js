@@ -14,7 +14,7 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      players: ['Seb', 'Ewan'],
+      players: ['First', 'Second'],
       playerTotals: [0, 0],
       currentPlayer: 0,
       numTurns: 0,
@@ -112,7 +112,7 @@ class LeaderBoard extends React.Component {
       return (
         <Col>
           <Row>
-            <Col>
+            <Col className="font-weight-bold">
               {name}
             </Col>
           </Row>
@@ -170,7 +170,7 @@ class ScorePad extends React.Component {
   render() {
 
     return (
-      <div>
+      <div className="text-center">
         {this.renderEntryButton(0)}
         {this.renderEntryButton(1)}
         {this.renderEntryButton(2)}
