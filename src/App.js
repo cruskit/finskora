@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Table from 'react-bootstrap/Table'
+import Card from 'react-bootstrap/Card'
 
 class App extends React.Component {
 
@@ -14,7 +15,7 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      players: ['First', 'Second'],
+      players: ['Player 1', 'Player 2'],
       playerTotals: [0, 0],
       currentPlayer: 0,
       numTurns: 0,
@@ -66,11 +67,13 @@ class App extends React.Component {
         <Navbar bg="primary" variant="dark" expand='true'>
           <Navbar.Brand href="#home">Finskora</Navbar.Brand>
           <Nav>
-          <Nav.Link href="#home" variant="dark">New Game</Nav.Link>
+            <Nav.Link href="#home" variant="dark">New Game</Nav.Link>
           </Nav>
         </Navbar>
 
         <Container fluid>
+
+          <br />
 
           <LeaderBoard
             playerNames={this.state.players}
@@ -79,10 +82,14 @@ class App extends React.Component {
             winner={this.state.winner}
           />
 
+          <br />
+
           <ScorePad
             onScoreEntered={(s) => this.handleScoreEntered(s)}
             onUndo={() => this.handleUndo()}
           />
+
+          <br />
 
           <Row>
             <Col>
@@ -111,17 +118,13 @@ class LeaderBoard extends React.Component {
     const scores = this.props.playerNames.map((name, number) => {
       return (
         <Col>
-          <Row>
-            <Col className="font-weight-bold">
-              {name}
-            </Col>
-          </Row>
-          <Row>
-            <Col>
+          <Card>
+            <Card.Header as="h5">{name}</Card.Header>
+            <Card.Text as="h1">
               {this.props.playerTotals[number]}
               {this.props.winner === number ? 'Winner' : ''}
-            </Col>
-          </Row>
+            </Card.Text>
+          </Card>
         </Col>
       );
     });
@@ -212,7 +215,7 @@ class PlayerHistory extends React.Component {
   render() {
     return (
       <div>
-        <p class="text-center">{this.props.player}</p>
+        <p class="text-center font-weight-bold">{this.props.player}</p>
         <Table bordered size="sm">
           <thead>
             <tr class="text-center">
