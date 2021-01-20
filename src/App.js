@@ -14,12 +14,20 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
+    const numPlayers = 2;
+    const playerNames = Array(0);
+    const turnScores = Array(0);
+    for (let i=0; i < numPlayers; i++){
+      playerNames.push(`Player ${i}`);
+      turnScores.push(Array(0));
+    }
+
     this.state = {
-      players: ['Player 1', 'Player 2'],
-      playerTotals: [0, 0],
+      players: playerNames,
+      playerTotals: Array(numPlayers).fill(0),
       currentPlayer: 0,
       numTurns: 0,
-      turnScores: [Array(0), Array(0)],
+      turnScores: turnScores,
       winner: -1,
     };
   }
@@ -91,20 +99,10 @@ class App extends React.Component {
 
           <br />
 
-          <Row>
-            <Col>
-              <PlayerHistory
-                player={this.state.players[0]}
-                scores={this.state.turnScores[0]}
-              />
-            </Col>
-            <Col>
-              <PlayerHistory
-                player={this.state.players[1]}
-                scores={this.state.turnScores[1]}
-              />
-            </Col>
-          </Row>
+          <PlayerHistory
+            players={this.state.players}
+            turnScores={this.state.turnScores}
+          />
         </Container>
       </div>
     );
@@ -197,9 +195,11 @@ class ScorePad extends React.Component {
 
 class PlayerHistory extends React.Component {
 
-  renderScores() {
-    const scoreList = this.props.scores.map((scores, round) => {
-
+  renderScores(turnScores) {
+    if (!turnScores){
+      return;
+    }
+    const scoreList = turnScores.map((scores, round) => {
       return (
         <tr class="text-center">
           <td>{round + 1}</td>
@@ -207,15 +207,15 @@ class PlayerHistory extends React.Component {
           <td>{scores.total}</td>
         </tr>
       );
-
     });
     return scoreList;
   }
 
-  render() {
-    return (
-      <div>
-        <p class="text-center font-weight-bold">{this.props.player}</p>
+  renderPlayers(){
+    const scoreTables = this.props.players.map((player, index) => {
+      return (
+        <Col>
+        <p class="text-center font-weight-bold">{player}</p>
         <Table bordered size="sm">
           <thead>
             <tr class="text-center">
@@ -225,11 +225,20 @@ class PlayerHistory extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {this.renderScores()}
+            {this.renderScores(this.props.turnScores[index])}
           </tbody>
         </Table>
+      </Col>
+      );
+    });
+    return scoreTables;
+  }
 
-      </div>
+  render() {
+    return (
+      <Row>
+        {this.renderPlayers()}
+      </Row>
     );
   }
 
