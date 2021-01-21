@@ -8,6 +8,9 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Table from 'react-bootstrap/Table'
 import Card from 'react-bootstrap/Card'
+import Image from 'react-bootstrap/Image'
+//import PinImage from './finska_pin_icon.png'
+import PinImage from './finska_pin_icon_35.png'
 
 class App extends React.Component {
 
@@ -17,8 +20,8 @@ class App extends React.Component {
     const numPlayers = 2;
     const playerNames = Array(0);
     const turnScores = Array(0);
-    for (let i=0; i < numPlayers; i++){
-      playerNames.push(`Player ${i}`);
+    for (let i = 0; i < numPlayers; i++) {
+      playerNames.push(`Player ${i + 1}`);
       turnScores.push(Array(0));
     }
 
@@ -117,7 +120,10 @@ class LeaderBoard extends React.Component {
       return (
         <Col>
           <Card>
-            <Card.Header as="h5">{name}</Card.Header>
+            <Card.Header as="h5">
+              {name}
+              <Image src={PinImage} className={number === this.props.currentPlayer ? "visible" : "invisible"} />
+            </Card.Header>
             <Card.Text as="h1">
               {this.props.playerTotals[number]}
               {this.props.winner === number ? 'Winner' : ''}
@@ -196,12 +202,12 @@ class ScorePad extends React.Component {
 class PlayerHistory extends React.Component {
 
   renderScores(turnScores) {
-    if (!turnScores){
+    if (!turnScores) {
       return;
     }
     const scoreList = turnScores.map((scores, round) => {
       return (
-        <tr class="text-center">
+        <tr className="text-center">
           <td>{round + 1}</td>
           <td>{scores.score}</td>
           <td>{scores.total}</td>
@@ -211,24 +217,24 @@ class PlayerHistory extends React.Component {
     return scoreList;
   }
 
-  renderPlayers(){
+  renderPlayers() {
     const scoreTables = this.props.players.map((player, index) => {
       return (
         <Col>
-        <p class="text-center font-weight-bold">{player}</p>
-        <Table bordered size="sm">
-          <thead>
-            <tr class="text-center">
-              <th>#</th>
-              <th>Score</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.renderScores(this.props.turnScores[index])}
-          </tbody>
-        </Table>
-      </Col>
+          <p className="text-center font-weight-bold">{player}</p>
+          <Table bordered size="sm">
+            <thead>
+              <tr className="text-center">
+                <th>#</th>
+                <th>Score</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.renderScores(this.props.turnScores[index])}
+            </tbody>
+          </Table>
+        </Col>
       );
     });
     return scoreTables;
