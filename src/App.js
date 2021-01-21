@@ -98,6 +98,7 @@ class App extends React.Component {
           <ScorePad
             onScoreEntered={(s) => this.handleScoreEntered(s)}
             onUndo={() => this.handleUndo()}
+            isScoringEnabled={this.state.winner == -1}
           />
 
           <br />
@@ -125,8 +126,7 @@ class LeaderBoard extends React.Component {
               <Image src={PinImage} className={number === this.props.currentPlayer ? "visible" : "invisible"} />
             </Card.Header>
             <Card.Text as="h1">
-              {this.props.playerTotals[number]}
-              {this.props.winner === number ? 'Winner' : ''}
+              {this.props.winner === number ? 'Win!' : this.props.playerTotals[number]}
             </Card.Text>
           </Card>
         </Col>
@@ -155,6 +155,7 @@ class ScorePad extends React.Component {
       <Button
         onClick={() => this.props.onScoreEntered(scoreValue)}
         variant="primary btn-circle btn-md"
+        className={this.props.isScoringEnabled ? "visible" : "d-none"}
       >
         {scoreValue}
       </Button>
