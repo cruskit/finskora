@@ -98,7 +98,7 @@ class App extends React.Component {
           <ScorePad
             onScoreEntered={(s) => this.handleScoreEntered(s)}
             onUndo={() => this.handleUndo()}
-            isScoringEnabled={this.state.winner == -1}
+            isScoringEnabled={this.state.winner === -1}
           />
 
           <br />
