@@ -19,5 +19,6 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: us-east-1 
         SOURCE_DIR: build
-        CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DIST_ID }}
+        # Caching policy disabled on Cloudfront while testing so don't need to invalidate
+        #CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DIST_ID }}
   
