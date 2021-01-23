@@ -235,10 +235,12 @@ class PlayerHistory extends React.Component {
     if (!turnScores) {
       return;
     }
-    const scoreList = turnScores.map((scores, round) => {
+
+    // Ensure scores are displayed with the most recent score first
+    const scoreList = turnScores.slice().reverse().map((scores, round) => {
       return (
         <tr className="text-center">
-          <td>{round + 1}</td>
+          <td>{turnScores.length - round}</td>
           <td>{scores.score}</td>
           <td>{scores.total}</td>
         </tr>
