@@ -17,6 +17,11 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = this.createNewGameState();
+  }
+
+  createNewGameState(){
+
     const numPlayers = 2;
     const playerNames = Array(0);
     const turnScores = Array(0);
@@ -25,7 +30,7 @@ class App extends React.Component {
       turnScores.push(Array(0));
     }
 
-    this.state = {
+    let newState = {
       players: playerNames,
       playerTotals: Array(numPlayers).fill(0),
       currentPlayer: 0,
@@ -33,6 +38,12 @@ class App extends React.Component {
       turnScores: turnScores,
       winner: -1,
     };
+
+    return newState;
+  }
+
+  handleStartNewGame(){
+    this.setState(this.createNewGameState());
   }
 
   handleScoreEntered(userScore) {
@@ -78,7 +89,7 @@ class App extends React.Component {
         <Navbar bg="primary" variant="dark" expand='true'>
           <Navbar.Brand href="#home">Finskora</Navbar.Brand>
           <Nav>
-            <Nav.Link href="#home" variant="dark">New Game</Nav.Link>
+            <Nav.Link href="#home" variant="dark" onClick={() => this.handleStartNewGame()}>New Game</Nav.Link>
           </Nav>
         </Navbar>
 
