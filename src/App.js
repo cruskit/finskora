@@ -116,16 +116,34 @@ class App extends React.Component {
 
 class LeaderBoard extends React.Component {
 
+  getScoreClass(playerNum) {
+    if (playerNum === this.props.currentPlayer) {
+      return "leaderboard-score-current";
+    }
+    // TODO: handle eliminated players
+    return "leaderboard-score";
+  }
+
+  getNameClass(playerNum) {
+    if (playerNum === this.props.currentPlayer) {
+      return "leaderboard-name-current";
+    }
+    // TODO: handle eliminated players
+    return "leaderboard-name";
+  }
+
   renderScores() {
     const scores = this.props.playerNames.map((name, number) => {
       return (
         <Col>
           <Card>
-            <Card.Header as="h5">
-              {name}
+            <Card.Header className={this.getNameClass(number)}>
+              {name} &nbsp;
               <Image src={PinImage} className={number === this.props.currentPlayer ? "visible" : "invisible"} />
             </Card.Header>
-            <Card.Text as="h1">
+            <Card.Text
+              className={this.getScoreClass(number)}
+            >
               {this.props.winner === number ? 'Win!' : this.props.playerTotals[number]}
             </Card.Text>
           </Card>
@@ -154,7 +172,7 @@ class ScorePad extends React.Component {
     return (
       <Button
         onClick={() => this.props.onScoreEntered(scoreValue)}
-        variant="primary btn-circle btn-md"
+        variant="primary btn-circle btn-xl"
         className={this.props.isScoringEnabled ? "visible" : "d-none"}
       >
         {scoreValue}
@@ -166,9 +184,9 @@ class ScorePad extends React.Component {
     return (
       <Button
         onClick={() => this.props.onUndo()}
-        variant="warning btn-circle btn-md"
+        variant="warning btn-circle btn-xl"
       >
-        &lt;=
+        Undo
       </Button>
 
     );
