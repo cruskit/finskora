@@ -349,7 +349,7 @@ function WinnerModal(props) {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className="text-center">
-              <Image src={TrophyImage} />
+              <Image src={TrophyImage} width="255" height="320"/>
         </Modal.Body>
         <Modal.Footer className="text-center">
           <Button variant="primary" onClick={props.newGame}>

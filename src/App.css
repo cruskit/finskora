@@ -25,6 +25,8 @@
 }
 
 .leaderboard-name-current { 
+  transition: color 0.5s ease,
+              background-color 1.0s ease;
   font-size: 40px; 
   color: white;
   background-color:  #007bff !important;; 
@@ -36,6 +38,7 @@
 
 
 .leaderboard-score-current { 
+  transition: background-color 1.0s ease;
   font-size: 80px; 
   text-align: center;
   background-color: #cae3ff; 
