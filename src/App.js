@@ -10,6 +10,7 @@ import Table from 'react-bootstrap/Table'
 import Card from 'react-bootstrap/Card'
 import Image from 'react-bootstrap/Image'
 import PinImage from './finska_pin_icon_35.png'
+import TrophyImage from './trophies.png'
 import Modal from 'react-bootstrap/Modal'
 
 class App extends React.Component {
@@ -38,6 +39,7 @@ class App extends React.Component {
       turnScores: turnScores,
       winner: -1,
       showNewGameConfirmModal: false,
+      showWinnerModal: false,
     };
 
     return newState;
@@ -52,7 +54,11 @@ class App extends React.Component {
   }
 
   handleCancelStartNewGame() {
-    this.setState({showNewGameConfirmModal: false});
+    this.setState({ showNewGameConfirmModal: false });
+  }
+
+  handleCloseWinnerModal() {
+    this.setState({ showWinnerModal: false });
   }
 
 
@@ -83,6 +89,7 @@ class App extends React.Component {
 
     if (newTotal === 50) {
       newState.winner = currentPlayer;
+      newState.showWinnerModal = true;
     }
 
     this.setState(newState);
@@ -134,6 +141,14 @@ class App extends React.Component {
           show={this.state.showNewGameConfirmModal}
           confirmed={() => this.handleStartNewGameConfirmed()}
           cancel={() => this.handleCancelStartNewGame()}
+        />
+
+        <WinnerModal
+          show={this.state.showWinnerModal}
+          newGame={() => this.handleStartNewGameConfirmed()}
+          cancel={() => this.handleCloseWinnerModal()}
+          undo={() => this.handleUndo()}
+          winner={this.state.players[this.state.winner]}
         />
 
       </div>
@@ -314,6 +329,34 @@ function NewGameConfirmationModal(props) {
           </Button>
           <Button variant="secondary" onClick={props.cancel}>
             Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+}
+
+function WinnerModal(props) {
+
+  return (
+    <>
+      <Modal centered show={props.show} onHide={props.cancel}>
+        <Modal.Header closeButton className="text-center">
+          <Modal.Title>
+            <h1 className="modal-title w-100">
+              {props.winner} Wins!
+            </h1>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+              <Image src={TrophyImage} />
+        </Modal.Body>
+        <Modal.Footer className="text-center">
+          <Button variant="primary" onClick={props.newGame}>
+            Start new game
+          </Button>
+          <Button variant="secondary" onClick={props.undo}>
+            Undo last score
           </Button>
         </Modal.Footer>
       </Modal>
