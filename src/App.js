@@ -9,8 +9,8 @@ import Col from 'react-bootstrap/Col'
 import Table from 'react-bootstrap/Table'
 import Card from 'react-bootstrap/Card'
 import Image from 'react-bootstrap/Image'
-//import PinImage from './finska_pin_icon.png'
 import PinImage from './finska_pin_icon_35.png'
+import Modal from 'react-bootstrap/Modal'
 
 class App extends React.Component {
 
@@ -20,7 +20,7 @@ class App extends React.Component {
     this.state = this.createNewGameState();
   }
 
-  createNewGameState(){
+  createNewGameState() {
 
     const numPlayers = 2;
     const playerNames = Array(0);
@@ -37,14 +37,24 @@ class App extends React.Component {
       numTurns: 0,
       turnScores: turnScores,
       winner: -1,
+      showNewGameConfirmModal: false,
     };
 
     return newState;
   }
 
-  handleStartNewGame(){
+  handleStartNewGame() {
+    this.setState({ showNewGameConfirmModal: true });
+  }
+
+  handleStartNewGameConfirmed() {
     this.setState(this.createNewGameState());
   }
+
+  handleCancelStartNewGame() {
+    this.setState({showNewGameConfirmModal: false});
+  }
+
 
   handleScoreEntered(userScore) {
 
@@ -119,6 +129,13 @@ class App extends React.Component {
             turnScores={this.state.turnScores}
           />
         </Container>
+
+        <NewGameConfirmationModal
+          show={this.state.showNewGameConfirmModal}
+          confirmed={() => this.handleStartNewGameConfirmed()}
+          cancel={() => this.handleCancelStartNewGame()}
+        />
+
       </div>
     );
   }
@@ -282,5 +299,26 @@ class PlayerHistory extends React.Component {
 
 }
 
+function NewGameConfirmationModal(props) {
+
+  return (
+    <>
+      <Modal show={props.show} onHide={props.cancel}>
+        <Modal.Header closeButton>
+          <Modal.Title>Start new game</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Do you want to start a new game? All scores will be reset.</Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={props.confirmed}>
+            New Game
+          </Button>
+          <Button variant="secondary" onClick={props.cancel}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+}
 
 export default App;
