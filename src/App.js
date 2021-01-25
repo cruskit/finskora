@@ -12,6 +12,8 @@ import Image from 'react-bootstrap/Image'
 import PinImage from './finska_pin_icon_35.png'
 import TrophyImage from './trophies.png'
 import Modal from 'react-bootstrap/Modal'
+// import Toast from 'react-bootstrap/Toast'
+// import ReactDom from 'react-dom'
 
 class App extends React.Component {
 
@@ -92,6 +94,9 @@ class App extends React.Component {
       newState.showWinnerModal = true;
     }
 
+    // Find the current players score so we can display a toast with the value added
+    //console.log("Bounding box: " + JSON.stringify(ReactDom.findDOMNode("playerScore_0").getBoundingClientRect()));
+
     this.setState(newState);
   }
 
@@ -151,6 +156,8 @@ class App extends React.Component {
           winner={this.state.players[this.state.winner]}
         />
 
+        {/* <UpdatedScoreToast /> */}
+
       </div>
     );
   }
@@ -186,6 +193,7 @@ class LeaderBoard extends React.Component {
             </Card.Header>
             <Card.Text
               className={this.getScoreClass(number)}
+              ref={"playerscore_" + number}
             >
               {this.props.winner === number ? 'Win!' : this.props.playerTotals[number]}
             </Card.Text>
@@ -349,7 +357,7 @@ function WinnerModal(props) {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className="text-center">
-              <Image src={TrophyImage} width="255" height="320"/>
+          <Image src={TrophyImage} width="255" height="320" />
         </Modal.Body>
         <Modal.Footer className="text-center">
           <Button variant="primary" onClick={props.newGame}>
@@ -363,5 +371,24 @@ function WinnerModal(props) {
     </>
   );
 }
+
+// function UpdatedScoreToast(props) {
+
+//   return (
+//     <>
+//       <Toast
+//         style={{
+//           position: 'absolute',
+//           top: 20,
+//           right: 0,
+//         }}
+//       >
+//         <Toast.Body>
+//           <h2>Player 1 +6</h2>
+//         </Toast.Body>
+//       </Toast>
+//     </>
+//   );
+// }
 
 export default App;
