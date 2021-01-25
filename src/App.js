@@ -25,7 +25,7 @@ class App extends React.Component {
 
   createNewGameState() {
 
-    const numPlayers = 2;
+    const numPlayers = 3;
     const playerNames = Array(0);
     const turnScores = Array(0);
     for (let i = 0; i < numPlayers; i++) {
