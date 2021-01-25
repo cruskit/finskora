@@ -1,35 +1,54 @@
 import React from 'react';
 import './App.css';
-import Container from 'react-bootstrap/Container'
-import Navbar from 'react-bootstrap/Navbar'
-import Nav from 'react-bootstrap/Nav'
-import Button from 'react-bootstrap/Button'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Table from 'react-bootstrap/Table'
-import Card from 'react-bootstrap/Card'
-import Image from 'react-bootstrap/Image'
-import PinImage from './finska_pin_icon_35.png'
-import TrophyImage from './trophies.png'
-import Modal from 'react-bootstrap/Modal'
-// import Toast from 'react-bootstrap/Toast'
-// import ReactDom from 'react-dom'
+import Container from 'react-bootstrap/Container';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Table from 'react-bootstrap/Table';
+import Card from 'react-bootstrap/Card';
+import Image from 'react-bootstrap/Image';
+import PinImage from './finska_pin_icon_35.png';
+import TrophyImage from './trophies.png';
+import Modal from 'react-bootstrap/Modal';
+import PlayerSelection from './PlayerSelection';
+// import Toast from 'react-bootstrap/Toast';
+// import ReactDom from 'react-dom';
 
 class App extends React.Component {
 
   constructor(props) {
     super(props);
 
-    this.state = this.createNewGameState();
+    const newState = this.createNewGameState();
+    newState.showSelectPlayersPanel = true;
+    newState.showPlayingPanel = false;
+
+    this.state = newState;
   }
 
-  createNewGameState() {
+  // Set of modes to define what is visible on screen
+  static MODE_WELCOME = 1; // When game first loads
+  static MODE_PLAYER_SELECTION = 2; // Player selection for the game
+  static MODE_SCORING = 3 // While we are playing a game and scoring
 
-    const numPlayers = 3;
-    const playerNames = Array(0);
+
+  createNewGameState(playerList) {
+
+    let numPlayers = 2;
+    let playerNames = Array(0);
+    if (playerList) {
+      numPlayers = playerList.length;
+      playerNames = playerList;
+    } else {
+      // TODO: Remove this once we've fixe the new game workflow
+      for (let i = 0; i < numPlayers; i++) {
+        playerNames.push(`Player ${i + 1}`);
+      }
+    }
     const turnScores = Array(0);
     for (let i = 0; i < numPlayers; i++) {
-      playerNames.push(`Player ${i + 1}`);
       turnScores.push(Array(0));
     }
 
@@ -47,12 +66,45 @@ class App extends React.Component {
     return newState;
   }
 
-  handleStartNewGame() {
+  handleStateNewGameLink() {
     this.setState({ showNewGameConfirmModal: true });
   }
 
-  handleStartNewGameConfirmed() {
-    this.setState(this.createNewGameState());
+  handleStartNewGameLinkConfirmed() {
+    this.setState({ showNewGameConfirmModal: false, showWinnerModal: false });
+    this.setGameState(App.MODE_PLAYER_SELECTION);
+  }
+
+  handleStartGameWithPlayers(players) {
+    console.log("Starting game with players: " + players);
+    this.setState(this.createNewGameState(players));
+    this.setGameState(App.MODE_SCORING);
+  }
+
+  setGameState(state) {
+    switch (state) {
+
+      case App.MODE_PLAYER_SELECTION:
+        this.setState({
+          showSelectPlayersPanel: true,
+          showPlayingPanel: false,
+        });
+        break;
+
+      case App.MODE_SCORING:
+        this.setState({
+          showSelectPlayersPanel: false,
+          showPlayingPanel: true,
+        });
+        break;
+
+      case App.MODE_WELCOME:
+        // TODO: implement this
+        break;
+
+      default:
+        console.warn("Unknown game state requested: " + state);
+    }
   }
 
   handleCancelStartNewGame() {
@@ -105,52 +157,71 @@ class App extends React.Component {
     this.setState(this.state.previousState);
   }
 
+  renderPlayingPanel() {
+    return (
+      <Container fluid>
+
+        <br />
+
+        <LeaderBoard
+          playerNames={this.state.players}
+          playerTotals={this.state.playerTotals}
+          currentPlayer={this.state.currentPlayer}
+          winner={this.state.winner}
+        />
+
+        <br />
+
+        <ScorePad
+          onScoreEntered={(s) => this.handleScoreEntered(s)}
+          onUndo={() => this.handleUndo()}
+          isScoringEnabled={this.state.winner === -1}
+        />
+
+        <br />
+
+        <PlayerHistory
+          players={this.state.players}
+          turnScores={this.state.turnScores}
+        />
+      </Container>
+    );
+  }
+
+  renderSelectPlayersPanel() {
+    return (
+      <Container fluid>
+
+        <PlayerSelection
+          onStartGame={(p) => this.handleStartGameWithPlayers(p)} />
+
+      </Container>
+    );
+  }
+
   render() {
     return (
       <div>
         <Navbar bg="primary" variant="dark" expand='true'>
           <Navbar.Brand href="#home">Finskora</Navbar.Brand>
           <Nav>
-            <Nav.Link href="#home" variant="dark" onClick={() => this.handleStartNewGame()}>New Game</Nav.Link>
+            <Nav.Link href="#home" variant="dark" onClick={() => this.handleStateNewGameLink()}>New Game</Nav.Link>
           </Nav>
         </Navbar>
 
-        <Container fluid>
+        { this.state.showSelectPlayersPanel && this.renderSelectPlayersPanel()}
 
-          <br />
-
-          <LeaderBoard
-            playerNames={this.state.players}
-            playerTotals={this.state.playerTotals}
-            currentPlayer={this.state.currentPlayer}
-            winner={this.state.winner}
-          />
-
-          <br />
-
-          <ScorePad
-            onScoreEntered={(s) => this.handleScoreEntered(s)}
-            onUndo={() => this.handleUndo()}
-            isScoringEnabled={this.state.winner === -1}
-          />
-
-          <br />
-
-          <PlayerHistory
-            players={this.state.players}
-            turnScores={this.state.turnScores}
-          />
-        </Container>
+        { this.state.showPlayingPanel && this.renderPlayingPanel()}
 
         <NewGameConfirmationModal
           show={this.state.showNewGameConfirmModal}
-          confirmed={() => this.handleStartNewGameConfirmed()}
+          confirmed={() => this.handleStartNewGameLinkConfirmed()}
           cancel={() => this.handleCancelStartNewGame()}
         />
 
         <WinnerModal
           show={this.state.showWinnerModal}
-          newGame={() => this.handleStartNewGameConfirmed()}
+          newGame={() => this.handleStartNewGameLinkConfirmed()}
           cancel={() => this.handleCloseWinnerModal()}
           undo={() => this.handleUndo()}
           winner={this.state.players[this.state.winner]}
@@ -185,7 +256,7 @@ class LeaderBoard extends React.Component {
   renderScores() {
     const scores = this.props.playerNames.map((name, number) => {
       return (
-        <Col>
+        <Col key={name}>
           <Card>
             <Card.Header className={this.getNameClass(number)}>
               {name} &nbsp;
@@ -193,7 +264,6 @@ class LeaderBoard extends React.Component {
             </Card.Header>
             <Card.Text
               className={this.getScoreClass(number)}
-              ref={"playerscore_" + number}
             >
               {this.props.winner === number ? 'Win!' : this.props.playerTotals[number]}
             </Card.Text>
@@ -279,7 +349,7 @@ class PlayerHistory extends React.Component {
     // Ensure scores are displayed with the most recent score first
     const scoreList = turnScores.slice().reverse().map((scores, round) => {
       return (
-        <tr className="text-center">
+        <tr className="text-center" key={round}>
           <td>{turnScores.length - round}</td>
           <td>{scores.score}</td>
           <td>{scores.total}</td>
@@ -292,7 +362,7 @@ class PlayerHistory extends React.Component {
   renderPlayers() {
     const scoreTables = this.props.players.map((player, index) => {
       return (
-        <Col>
+        <Col key={player}>
           <p className="text-center font-weight-bold">{player}</p>
           <Table bordered size="sm">
             <thead>
