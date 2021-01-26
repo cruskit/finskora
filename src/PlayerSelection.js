@@ -45,6 +45,7 @@ class PlayerSelection extends React.Component {
     render() {
         return (
             <Container fluid>
+                <br />
                 <h1>Choose Players / Teams</h1>
 
                 {this.displaySelectedPlayers()}

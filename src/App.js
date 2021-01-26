@@ -13,6 +13,8 @@ import PinImage from './finska_pin_icon_35.png';
 import TrophyImage from './trophies.png';
 import Modal from 'react-bootstrap/Modal';
 import PlayerSelection from './PlayerSelection';
+import Welcome from './Welcome';
+
 // import Toast from 'react-bootstrap/Toast';
 // import ReactDom from 'react-dom';
 
@@ -22,7 +24,8 @@ class App extends React.Component {
     super(props);
 
     const newState = this.createNewGameState();
-    newState.showSelectPlayersPanel = true;
+    newState.showWelcomePanel = true;
+    newState.showSelectPlayersPanel = false;
     newState.showPlayingPanel = false;
 
     this.state = newState;
@@ -86,6 +89,7 @@ class App extends React.Component {
 
       case App.MODE_PLAYER_SELECTION:
         this.setState({
+          showWelcomePanel: false,
           showSelectPlayersPanel: true,
           showPlayingPanel: false,
         });
@@ -93,13 +97,18 @@ class App extends React.Component {
 
       case App.MODE_SCORING:
         this.setState({
+          showWelcomePanel: false,
           showSelectPlayersPanel: false,
           showPlayingPanel: true,
         });
         break;
 
       case App.MODE_WELCOME:
-        // TODO: implement this
+        this.setState({
+          showWelcomePanel: true,
+          showSelectPlayersPanel: false,
+          showPlayingPanel: false,
+        });
         break;
 
       default:
@@ -199,6 +208,14 @@ class App extends React.Component {
     );
   }
 
+  renderWelcomePanel() {
+    return (
+      <Welcome
+        onStartGame={() => this.setGameState(App.MODE_PLAYER_SELECTION)}
+      />
+    );
+  }
+
   render() {
     return (
       <div>
@@ -208,6 +225,8 @@ class App extends React.Component {
             <Nav.Link href="#home" variant="dark" onClick={() => this.handleStateNewGameLink()}>New Game</Nav.Link>
           </Nav>
         </Navbar>
+
+        { this.state.showWelcomePanel && this.renderWelcomePanel()}
 
         { this.state.showSelectPlayersPanel && this.renderSelectPlayersPanel()}
 
