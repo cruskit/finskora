@@ -35,7 +35,7 @@ class Welcome extends React.Component {
                 <br />
                 <br />
                 <br />
-                <p><small>Finskora is in no way affiliated or associated with <a href="https://finska.com.au">Finska</a></small></p>
+                <p><small>Finskora is not affiliated or associated with <a href="https://finska.com.au">Finska</a></small></p>
             </Container>
         )
     }

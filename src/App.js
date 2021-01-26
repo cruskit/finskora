@@ -14,6 +14,8 @@ import TrophyImage from './trophies.png';
 import Modal from 'react-bootstrap/Modal';
 import PlayerSelection from './PlayerSelection';
 import Welcome from './Welcome';
+import PinSetupImage from './FinskaPinSetup.png';
+
 
 // import Toast from 'react-bootstrap/Toast';
 // import ReactDom from 'react-dom';
@@ -124,7 +126,13 @@ class App extends React.Component {
     this.setState({ showWinnerModal: false });
   }
 
+  handleClosePinSetupModal() {
+    this.setState({ showPinSetupModal: false });
+  }
 
+  handleShowPinSetupModal() {
+    this.setState({ showPinSetupModal: true });
+  }
   handleScoreEntered(userScore) {
 
     console.log("Handling entered score: " + userScore);
@@ -218,11 +226,16 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-        <Navbar bg="primary" variant="dark" expand='true'>
+      <>
+        <Navbar bg="primary" variant="dark">
           <Navbar.Brand href="#home">Finskora</Navbar.Brand>
-          <Nav>
-            <Nav.Link href="#home" variant="dark" onClick={() => this.handleStateNewGameLink()}>New Game</Nav.Link>
+          <Nav className="ml-auto mr-1 justify-content-end">
+            <Nav.Item>
+              <Nav.Link href="#home" variant="dark" onClick={() => this.handleStateNewGameLink()}>New Game</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link href="#home" variant="dark" onClick={() => this.handleShowPinSetupModal()}>Pin Setup</Nav.Link>
+            </Nav.Item>
           </Nav>
         </Navbar>
 
@@ -246,9 +259,15 @@ class App extends React.Component {
           winner={this.state.players[this.state.winner]}
         />
 
+        <PinSetupModal
+          show={this.state.showPinSetupModal}
+          cancel={() => this.handleClosePinSetupModal()}
+        />
+
+
         {/* <UpdatedScoreToast /> */}
 
-      </div>
+      </>
     );
   }
 
@@ -454,6 +473,31 @@ function WinnerModal(props) {
           </Button>
           <Button variant="secondary" onClick={props.undo}>
             Undo last score
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+}
+
+function PinSetupModal(props) {
+
+  return (
+    <>
+      <Modal centered show={props.show} onHide={props.cancel}>
+        <Modal.Header closeButton className="text-center">
+          <Modal.Title>
+            <h3 className="modal-title w-100">
+              Starting Pin Setup
+            </h3>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          <Image src={PinSetupImage} />
+        </Modal.Body>
+        <Modal.Footer className="text-center">
+          <Button variant="primary" onClick={props.cancel}>
+            Close
           </Button>
         </Modal.Footer>
       </Modal>
