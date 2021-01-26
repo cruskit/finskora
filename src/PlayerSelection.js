@@ -12,13 +12,24 @@ class PlayerSelection extends React.Component {
     constructor(props) {
         super(props);
 
-        let playerNames = JSON.parse(localStorage.getItem("selectedPlayers"));
-        let recentPlayers = JSON.parse(localStorage.getItem("recentPlayers"));
+        let playerNames, recentPlayers;
 
-        if (!Array.isArray(playerNames)){
+        try {
+            playerNames = JSON.parse(localStorage.getItem("selectedPlayers"));
+        } catch (error) {
             playerNames = Array(0);
         }
-        if (!Array.isArray(recentPlayers)){
+
+        try {
+            recentPlayers = JSON.parse(localStorage.getItem("recentPlayers"));
+        } catch (error) {
+            recentPlayers = Array(0);
+        }
+
+        if (!Array.isArray(playerNames)) {
+            playerNames = Array(0);
+        }
+        if (!Array.isArray(recentPlayers)) {
             recentPlayers = Array(0);
         }
 
