@@ -29,10 +29,21 @@ class PlayerSelection extends React.Component {
         }
     }
 
+    addFromRecentPlayers(index) {
+        const players = this.state.selectedPlayers.slice();
+        players.push(this.state.recentPlayers[index]);
+        const recentPlayers = this.state.recentPlayers.slice();
+        recentPlayers.splice(index, 1);
+        this.setState({ selectedPlayers: players, recentPlayers: recentPlayers })
+    }
+
     deletePlayer(index) {
+        let recentPlayers = [this.state.selectedPlayers[index]].concat(this.state.recentPlayers.slice());
+        // Only keep the 5 most recent players
+        recentPlayers = recentPlayers.slice(0,5);
         const players = this.state.selectedPlayers.slice();
         players.splice(index, 1);
-        this.setState({ selectedPlayers: players })
+        this.setState({ selectedPlayers: players, recentPlayers: recentPlayers })
     }
 
     movePlayer(index, numSpots) {
@@ -57,24 +68,47 @@ class PlayerSelection extends React.Component {
     }
 
     displaySelectedPlayers() {
+
+        if (this.state.selectedPlayers.length === 0) {
+            return (<li key="noPlayers" className="list-group-item">No players chosen - please add a player</li>);
+        }
+
         const playerList = this.state.selectedPlayers.map((name, number) => {
             return (
                 <li key={name} className="list-group-item">
                     <strong>
                         {name}
                     &nbsp; <span className={number === 0 ? "hidden" : "iconoo-caretUpCircle"}
-                        onClick={() => this.movePlayer(number, -1)}></span>
-                    <span className={number === 0 ? "hidden" : ""}>&nbsp;</span>
-                    <span className={number === this.state.selectedPlayers.length - 1 ? "hidden" : "iconoo-caretDownCircle"}
-                        onClick={() => this.movePlayer(number, 1)}></span>
-                    <span className={this.state.selectedPlayers.length - 1 ? "hidden" : ""}>&nbsp;</span>
-                    <span className="iconoo-crossCircle"
-                        onClick={() => this.deletePlayer(number)}></span>
-                        </strong>
+                            onClick={() => this.movePlayer(number, -1)}></span>
+                        <span className={number === 0 ? "hidden" : ""}>&nbsp;</span>
+                        <span className={number === this.state.selectedPlayers.length - 1 ? "hidden" : "iconoo-caretDownCircle"}
+                            onClick={() => this.movePlayer(number, 1)}></span>
+                        <span className={this.state.selectedPlayers.length - 1 ? "hidden" : ""}>&nbsp;</span>
+                        <span className="iconoo-crossCircle"
+                            onClick={() => this.deletePlayer(number)}></span>
+                    </strong>
                 </li>
             );
         });
         return playerList;
+    }
+
+    displayRecentPlayers() {
+
+        if (this.state.recentPlayers.length === 0) {
+            return (<li key="noPlayers" className="list-group-item">No recent players</li>);
+        }
+
+        const recentPlayerList = this.state.recentPlayers.map((name, number) => {
+            return (
+                <li key={name} className="list-group-item">
+                    {name}
+                    &nbsp; <span className="iconoo-plusCircle"
+                        onClick={() => this.addFromRecentPlayers(number)}></span>
+                </li>
+            );
+        });
+        return recentPlayerList;
     }
 
     render() {
@@ -117,8 +151,15 @@ class PlayerSelection extends React.Component {
                         </Col>
                     </Form.Row>
                 </Form>
+                <br />
                 <Row>
-
+                    <h3>Recent Players</h3>
+                </Row>
+                <br />
+                <Row>
+                    <ul className="list-item">
+                        {this.displayRecentPlayers()}
+                    </ul>
                 </Row>
             </Container>
         );
