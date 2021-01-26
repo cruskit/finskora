@@ -207,7 +207,7 @@ class App extends React.Component {
 
   renderSelectPlayersPanel() {
     return (
-      <Container fluid>
+      <Container>
 
         <PlayerSelection
           onStartGame={(p) => this.handleStartGameWithPlayers(p)} />

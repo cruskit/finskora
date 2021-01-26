@@ -4,6 +4,9 @@ import './PlayerSelection.css';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+
 class PlayerSelection extends React.Component {
 
     constructor(props) {
@@ -16,23 +19,6 @@ class PlayerSelection extends React.Component {
             recentPlayers: Array(0),
             newPlayerName: "",
         }
-    }
-
-    displaySelectedPlayers() {
-        const playerList = this.state.selectedPlayers.map((name, number) => {
-            return (
-                <p key={name}>
-                    {name}
-                    &nbsp; <span className="iconoo-caretUpCircle"
-                        onClick={() => this.movePlayer(number, -1)}></span>
-                    &nbsp; <span className="iconoo-caretDownCircle"
-                        onClick={() => this.movePlayer(number, 1)}></span>
-                    &nbsp; <span className="iconoo-crossCircle"
-                        onClick={() => this.deletePlayer(number)}></span>
-                </p>
-            );
-        });
-        return playerList;
     }
 
     addPlayer() {
@@ -52,7 +38,7 @@ class PlayerSelection extends React.Component {
     movePlayer(index, numSpots) {
         const players = this.state.selectedPlayers.slice();
         const newIndex = index + numSpots;
-        if (newIndex < 0 || newIndex >= players.length){
+        if (newIndex < 0 || newIndex >= players.length) {
             console.log(`Attempt to move players outside array bounds, index: ${index}, numSpots: ${numSpots}`);
             return;
         }
@@ -70,29 +56,70 @@ class PlayerSelection extends React.Component {
         this.props.onStartGame(this.state.selectedPlayers);
     }
 
+    displaySelectedPlayers() {
+        const playerList = this.state.selectedPlayers.map((name, number) => {
+            return (
+                <li key={name} className="list-group-item">
+                    <strong>
+                        {name}
+                    &nbsp; <span className={number === 0 ? "hidden" : "iconoo-caretUpCircle"}
+                        onClick={() => this.movePlayer(number, -1)}></span>
+                    <span className={number === 0 ? "hidden" : ""}>&nbsp;</span>
+                    <span className={number === this.state.selectedPlayers.length - 1 ? "hidden" : "iconoo-caretDownCircle"}
+                        onClick={() => this.movePlayer(number, 1)}></span>
+                    <span className={this.state.selectedPlayers.length - 1 ? "hidden" : ""}>&nbsp;</span>
+                    <span className="iconoo-crossCircle"
+                        onClick={() => this.deletePlayer(number)}></span>
+                        </strong>
+                </li>
+            );
+        });
+        return playerList;
+    }
 
     render() {
         return (
-            <Container fluid>
+            <Container>
                 <br />
-                <h1>Choose Players / Teams</h1>
+                <Row>
+                    <Col>
+                        <h1>Selected Players </h1>
+                    </Col>
+                    <Col>
+                        <Button variant="primary btn-lg" onClick={() => this.startGame()}>
+                            Start Game
+                        </Button>
+                    </Col>
+                </Row>
 
-                {this.displaySelectedPlayers()}
+                <br />
+
+                <Row>
+                    <ul className="list-item">
+                        {this.displaySelectedPlayers()}
+                    </ul>
+                </Row>
+
+                <br />
 
                 <Form>
-
-                    <Form.Control size="lg" type="text" placeholder="Player or Team Name"
-                        value={this.state.newPlayerName}
-                        onChange={(e) => this.setState({ newPlayerName: e.target.value })}
-                    />
-                    <Button variant="primary" onClick={() => this.addPlayer()}>
-                        Add Player
-                    </Button>
+                    <Form.Row>
+                        <Col>
+                            <Form.Control size="lg" type="text" placeholder="New Player Name"
+                                value={this.state.newPlayerName}
+                                onChange={(e) => this.setState({ newPlayerName: e.target.value })}
+                            />
+                        </Col>
+                        <Col>
+                            <Button variant="primary" className="btn-lg" type="submit" onClick={() => this.addPlayer()}>
+                                Add Player
+                            </Button>
+                        </Col>
+                    </Form.Row>
                 </Form>
+                <Row>
 
-                <Button variant="primary" onClick={() => this.startGame()}>
-                    Start Game with selected players
-                </Button>
+                </Row>
             </Container>
         );
     }
