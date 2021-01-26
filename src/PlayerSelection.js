@@ -12,11 +12,19 @@ class PlayerSelection extends React.Component {
     constructor(props) {
         super(props);
 
-        const playerNames = ['Player 1', 'Player 2'];
+        let playerNames = JSON.parse(localStorage.getItem("selectedPlayers"));
+        let recentPlayers = JSON.parse(localStorage.getItem("recentPlayers"));
+
+        if (!Array.isArray(playerNames)){
+            playerNames = Array(0);
+        }
+        if (!Array.isArray(recentPlayers)){
+            recentPlayers = Array(0);
+        }
 
         this.state = {
             selectedPlayers: playerNames,
-            recentPlayers: Array(0),
+            recentPlayers: recentPlayers,
             newPlayerName: "",
         }
     }
@@ -40,7 +48,7 @@ class PlayerSelection extends React.Component {
     deletePlayer(index) {
         let recentPlayers = [this.state.selectedPlayers[index]].concat(this.state.recentPlayers.slice());
         // Only keep the 5 most recent players
-        recentPlayers = recentPlayers.slice(0,5);
+        recentPlayers = recentPlayers.slice(0, 5);
         const players = this.state.selectedPlayers.slice();
         players.splice(index, 1);
         this.setState({ selectedPlayers: players, recentPlayers: recentPlayers })
@@ -64,6 +72,11 @@ class PlayerSelection extends React.Component {
 
     startGame() {
         console.log("Request to start game with players: " + this.state.selectedPlayers);
+
+        // Keep a copy of the players so they user can start with same selections
+        localStorage.setItem("selectedPlayers", JSON.stringify(this.state.selectedPlayers));
+        localStorage.setItem("recentPlayers", JSON.stringify(this.state.recentPlayers));
+
         this.props.onStartGame(this.state.selectedPlayers);
     }
 
