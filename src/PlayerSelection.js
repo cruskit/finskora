@@ -38,14 +38,18 @@ class PlayerSelection extends React.Component {
             recentPlayers: recentPlayers,
             newPlayerName: "",
         }
+
+        console.log("Initialised player selection to: " + JSON.stringify(this.state));
     }
 
     addPlayer() {
+        console.log("Adding new player: " + this.state.newPlayerName);
         if (this.state.newPlayerName.length > 0) {
             const players = this.state.selectedPlayers.slice();
             players.push(this.state.newPlayerName);
             this.setState({ selectedPlayers: players, newPlayerName: "" })
         }
+        console.log("Finished adding player, new state: " + JSON.stringify(this.state));
     }
 
     addFromRecentPlayers(index) {
@@ -160,7 +164,7 @@ class PlayerSelection extends React.Component {
 
                 <br />
 
-                <Form>
+                <Form onSubmit={e => e.preventDefault()}>
                     <Form.Row>
                         <Col>
                             <Form.Control size="lg" type="text" placeholder="New Player Name"
