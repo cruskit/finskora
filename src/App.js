@@ -15,9 +15,8 @@ import Modal from 'react-bootstrap/Modal';
 import PlayerSelection from './PlayerSelection';
 import Welcome from './Welcome';
 import PinSetupImage from './FinskaPinSetup.png';
+import Toast from 'react-bootstrap/Toast';
 
-
-// import Toast from 'react-bootstrap/Toast';
 // import ReactDom from 'react-dom';
 
 class App extends React.Component {
@@ -29,6 +28,7 @@ class App extends React.Component {
     newState.showWelcomePanel = true;
     newState.showSelectPlayersPanel = false;
     newState.showPlayingPanel = false;
+    newState.showToast = false;
 
     this.state = newState;
   }
@@ -43,6 +43,7 @@ class App extends React.Component {
 
     let numPlayers = 2;
     let playerNames = Array(0);
+    let scoreRefs = Array(0);
     if (playerList) {
       numPlayers = playerList.length;
       playerNames = playerList;
@@ -55,6 +56,7 @@ class App extends React.Component {
     const turnScores = Array(0);
     for (let i = 0; i < numPlayers; i++) {
       turnScores.push(Array(0));
+      scoreRefs.push(React.createRef());
     }
 
     let newState = {
@@ -63,9 +65,11 @@ class App extends React.Component {
       currentPlayer: 0,
       numTurns: 0,
       turnScores: turnScores,
+      scoreRefs: scoreRefs,
       winner: -1,
       showNewGameConfirmModal: false,
       showWinnerModal: false,
+      showToast: false,
     };
 
     return newState;
@@ -139,7 +143,11 @@ class App extends React.Component {
 
     const currentPlayer = this.state.numTurns % this.state.players.length;
 
-    const newState = JSON.parse(JSON.stringify(this.state));
+    // Don't try and copy the refs as they give circular references
+    const newState = JSON.parse(JSON.stringify(this.state, (key, value) => {
+      return key === "scoreRefs" ? undefined : value;
+    }));
+    newState.scoreRefs = this.state.scoreRefs;
 
     const turnScores = this.state.turnScores[currentPlayer];
     const currentTotal = turnScores.length === 0 ? 0 : turnScores[turnScores.length - 1].total;
@@ -164,9 +172,26 @@ class App extends React.Component {
     }
 
     // Find the current players score so we can display a toast with the value added
-    //console.log("Bounding box: " + JSON.stringify(ReactDom.findDOMNode("playerScore_0").getBoundingClientRect()));
+    console.log("Bounding box: " + JSON.stringify(this.state.scoreRefs[currentPlayer].current.getBoundingClientRect()));
+    let scorePos = this.state.scoreRefs[currentPlayer].current.getBoundingClientRect();
+    let toastPosX = scorePos.x + (scorePos.width / 2) + 50;
+    let toastPosY = scorePos.y + 8;
+
+    console.log("toastPosX: " + toastPosX + ", toastPosY: " + toastPosY);
+
+    newState.toastPosX = toastPosX;
+    newState.toastPosY = toastPosY;
+    newState.lastScore = userScore;
+    newState.showToast = true;
 
     this.setState(newState);
+    this.hideToastAfterDelay();
+  }
+
+  hideToastAfterDelay(){
+    setTimeout(() => {
+      this.setState({showToast: false});
+    }, 1000);
   }
 
   handleUndo() {
@@ -185,6 +210,7 @@ class App extends React.Component {
           playerTotals={this.state.playerTotals}
           currentPlayer={this.state.currentPlayer}
           winner={this.state.winner}
+          scoreRefs={this.state.scoreRefs}
         />
 
         <br />
@@ -265,7 +291,12 @@ class App extends React.Component {
         />
 
 
-        {/* <UpdatedScoreToast /> */}
+        <UpdatedScoreToast
+          show={this.state.showToast}
+          x={this.state.toastPosX}
+          y={this.state.toastPosY}
+          score={this.state.lastScore}
+        />
 
       </>
     );
@@ -300,7 +331,7 @@ class LeaderBoard extends React.Component {
               {name} &nbsp;
               <Image src={PinImage} className={number === this.props.currentPlayer ? "visible" : "invisible"} />
             </Card.Header>
-            <Card.Text
+            <Card.Text ref={this.props.scoreRefs[number]}
               className={this.getScoreClass(number)}
             >
               {this.props.winner === number ? 'Win!' : this.props.playerTotals[number]}
@@ -505,23 +536,23 @@ function PinSetupModal(props) {
   );
 }
 
-// function UpdatedScoreToast(props) {
+function UpdatedScoreToast(props) {
 
-//   return (
-//     <>
-//       <Toast
-//         style={{
-//           position: 'absolute',
-//           top: 20,
-//           right: 0,
-//         }}
-//       >
-//         <Toast.Body>
-//           <h2>Player 1 +6</h2>
-//         </Toast.Body>
-//       </Toast>
-//     </>
-//   );
-// }
+  return (
+    <>
+      <Toast show={props.show}
+        style={{
+          position: 'absolute',
+          top: props.y,
+          left: props.x,
+        }}
+      >
+        <Toast.Body>
+          <h2>+{props.score}</h2>
+        </Toast.Body>
+      </Toast>
+    </>
+  );
+}
 
 export default App;
