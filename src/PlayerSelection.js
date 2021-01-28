@@ -99,18 +99,28 @@ class PlayerSelection extends React.Component {
 
         const playerList = this.state.selectedPlayers.map((name, number) => {
             return (
-                <li key={name} className="list-group-item">
+                <li key={name} className="list-group-item d-flex justify-content-between align-items-center">
                     <strong>
                         {name}
-                    &nbsp; <span className={number === 0 ? "hidden" : "iconoo-caretUpCircle"}
-                            onClick={() => this.movePlayer(number, -1)}></span>
-                        <span className={number === 0 ? "hidden" : ""}>&nbsp;</span>
-                        <span className={number === this.state.selectedPlayers.length - 1 ? "hidden" : "iconoo-caretDownCircle"}
-                            onClick={() => this.movePlayer(number, 1)}></span>
-                        <span className={this.state.selectedPlayers.length - 1 ? "hidden" : ""}>&nbsp;</span>
+                    </strong>
+                        &nbsp; &nbsp; &nbsp;
+                    <span className="badge">
+
+                        <span className={number === 0 ? "invisible" : "visible"}>
+                            &nbsp; <span className="iconoo-caretUpCircle"
+                                onClick={() => this.movePlayer(number, -1)}></span>
+                        </span>
+                        &nbsp; &nbsp;
+                        <span className={number === this.state.selectedPlayers.length - 1 ? "invisible" : "visible"}>
+                            <span className="iconoo-caretDownCircle"
+                                onClick={() => this.movePlayer(number, 1)}></span>
+                        </span>
+                        &nbsp; &nbsp;
                         <span className="iconoo-crossCircle"
                             onClick={() => this.deletePlayer(number)}></span>
-                    </strong>
+
+
+                    </span>
                 </li>
             );
         });
