@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-
+import FlipMove from 'react-flip-move';
 class PlayerSelection extends React.Component {
 
     constructor(props) {
@@ -94,15 +94,15 @@ class PlayerSelection extends React.Component {
     displaySelectedPlayers() {
 
         if (this.state.selectedPlayers.length === 0) {
-            return (<li key="noPlayers" className="list-group-item">No players chosen - please add a player</li>);
+            return (<li key="noPlayers" className="list-group-item"><h3>Please add some players</h3></li>);
         }
 
         const playerList = this.state.selectedPlayers.map((name, number) => {
             return (
                 <li key={name} className="list-group-item d-flex justify-content-between align-items-center">
-                    <strong>
+                    <h2>
                         {name}
-                    </strong>
+                    </h2>
                         &nbsp; &nbsp; &nbsp;
                     <span className="badge">
 
@@ -130,15 +130,18 @@ class PlayerSelection extends React.Component {
     displayRecentPlayers() {
 
         if (this.state.recentPlayers.length === 0) {
-            return (<li key="noPlayers" className="list-group-item">No recent players</li>);
+            return (<li key="noPlayers" className="list-group-item"><h3>No recent players</h3></li>);
         }
 
         const recentPlayerList = this.state.recentPlayers.map((name, number) => {
             return (
-                <li key={name} className="list-group-item">
-                    {name}
-                    &nbsp; <span className="iconoo-plusCircle"
-                        onClick={() => this.addFromRecentPlayers(number)}></span>
+                <li key={name} className="list-group-item d-flex justify-content-between align-items-center">
+                    <h3>{name}</h3>
+                    &nbsp; &nbsp; &nbsp;
+                    <span className="badge">
+                        <span className="iconoo-plusCircle"
+                            onClick={() => this.addFromRecentPlayers(number)}></span>
+                    </span>
                 </li>
             );
         });
@@ -151,7 +154,7 @@ class PlayerSelection extends React.Component {
                 <br />
                 <Row>
                     <Col>
-                        <h1>Selected Players </h1>
+                        <h1>Players for this game</h1>
                     </Col>
                     <Col>
                         <Button variant="primary btn-lg" onClick={() => this.startGame()}>
@@ -164,7 +167,9 @@ class PlayerSelection extends React.Component {
 
                 <Row>
                     <ul className="list-item">
-                        {this.displaySelectedPlayers()}
+                        <FlipMove>
+                            {this.displaySelectedPlayers()}
+                        </FlipMove>
                     </ul>
                 </Row>
 
