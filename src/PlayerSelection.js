@@ -42,9 +42,24 @@ class PlayerSelection extends React.Component {
 
     addPlayer() {
         if (this.state.newPlayerName.length > 0) {
+
             const players = this.state.selectedPlayers.slice();
+
+            // Don't add if they are already playing - would be duplicate
+            if (players.includes(this.state.newPlayerName)){
+                return;
+            }
+
             players.push(this.state.newPlayerName);
             this.setState({ selectedPlayers: players, newPlayerName: "" })
+
+            // If the player name was in the recent list get rid of them
+            // as they're now a current player and we don't want duplicates
+            const recentPlayers = this.state.recentPlayers.slice();
+            if (recentPlayers.includes(this.state.newPlayerName)){
+                recentPlayers.splice(recentPlayers.indexOf(this.state.newPlayerName), 1);
+                this.setState({ recentPlayers: recentPlayers });
+            }
         }
     }
 
@@ -53,7 +68,7 @@ class PlayerSelection extends React.Component {
         players.push(this.state.recentPlayers[index]);
         const recentPlayers = this.state.recentPlayers.slice();
         recentPlayers.splice(index, 1);
-        this.setState({ selectedPlayers: players, recentPlayers: recentPlayers })
+        this.setState({ selectedPlayers: players, recentPlayers: recentPlayers });
     }
 
     deletePlayer(index) {
@@ -62,7 +77,7 @@ class PlayerSelection extends React.Component {
         recentPlayers = recentPlayers.slice(0, 5);
         const players = this.state.selectedPlayers.slice();
         players.splice(index, 1);
-        this.setState({ selectedPlayers: players, recentPlayers: recentPlayers })
+        this.setState({ selectedPlayers: players, recentPlayers: recentPlayers });
     }
 
     movePlayer(index, numSpots) {
