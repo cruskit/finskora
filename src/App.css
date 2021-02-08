@@ -23,7 +23,7 @@
   font-size: 40px; 
   text-align: center; 
 }
-@media screen and (max-width: 400px){
+@media screen and (max-width: 450px){
   .btn-circle.btn-xl { 
     width: 60px; 
     height: 60px; 
@@ -60,7 +60,7 @@
   text-align: center; 
 }
 
-@media screen and (max-width: 400px){
+@media screen and (max-width: 450px){
   .leaderboard-name-current { 
     transition: color 0.5s ease,
                 background-color 1.0s ease;
