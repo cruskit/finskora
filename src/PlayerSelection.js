@@ -46,7 +46,7 @@ class PlayerSelection extends React.Component {
             const players = this.state.selectedPlayers.slice();
 
             // Don't add if they are already playing - would be duplicate
-            if (players.includes(this.state.newPlayerName)){
+            if (players.includes(this.state.newPlayerName)) {
                 return;
             }
 
@@ -56,7 +56,7 @@ class PlayerSelection extends React.Component {
             // If the player name was in the recent list get rid of them
             // as they're now a current player and we don't want duplicates
             const recentPlayers = this.state.recentPlayers.slice();
-            if (recentPlayers.includes(this.state.newPlayerName)){
+            if (recentPlayers.includes(this.state.newPlayerName)) {
                 recentPlayers.splice(recentPlayers.indexOf(this.state.newPlayerName), 1);
                 this.setState({ recentPlayers: recentPlayers });
             }
@@ -104,6 +104,39 @@ class PlayerSelection extends React.Component {
         localStorage.setItem("recentPlayers", JSON.stringify(this.state.recentPlayers));
 
         this.props.onStartGame(this.state.selectedPlayers);
+    }
+
+
+    shufflePlayers() {
+        console.log("Request player order shuffling");
+        let players = this.shuffleArray(this.state.selectedPlayers.slice());
+
+        // Make sure the order of the players always changes
+        if (players.length > 1){
+            while (this.arraysEqual(this.state.selectedPlayers, players)) {
+                players = this.shuffleArray(players);
+            }
+            this.setState({ selectedPlayers: players });
+        }
+    }
+
+    arraysEqual(a, b) {
+        if (a === b) return true;
+        if (a == null || b == null) return false;
+        if (a.length !== b.length) return false;
+
+        for (var i = 0; i < a.length; ++i) {
+            if (a[i] !== b[i]) return false;
+        }
+        return true;
+    }
+
+    shuffleArray(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
     }
 
     displaySelectedPlayers() {
@@ -174,6 +207,10 @@ class PlayerSelection extends React.Component {
                     <Col>
                         <Button variant="primary btn-lg" onClick={() => this.startGame()}>
                             Start Game
+                        </Button>
+                        &nbsp; &nbsp;
+                        <Button variant="primary btn-lg" onClick={() => this.shufflePlayers()}>
+                            Shuffle Players
                         </Button>
                     </Col>
                 </Row>
