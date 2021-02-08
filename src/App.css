@@ -23,6 +23,17 @@
   font-size: 40px; 
   text-align: center; 
 }
+@media screen and (max-width: 400px){
+  .btn-circle.btn-xl { 
+    width: 60px; 
+    height: 60px; 
+    padding: 0px 0px; 
+    border-radius: 30px; 
+    font-size: 18px; 
+    text-align: center; 
+  } 
+}
+
 
 .leaderboard-name-current { 
   transition: color 0.5s ease,
@@ -47,4 +58,31 @@
 .leaderboard-score { 
   font-size: 80px; 
   text-align: center; 
+}
+
+@media screen and (max-width: 400px){
+  .leaderboard-name-current { 
+    transition: color 0.5s ease,
+                background-color 1.0s ease;
+    font-size: 25px; 
+    color: white;
+    background-color:  #007bff !important;; 
+  }
+  
+  .leaderboard-name { 
+    font-size: 25px; 
+  }
+  
+  
+  .leaderboard-score-current { 
+    transition: background-color 1.0s ease;
+    font-size: 40px; 
+    text-align: center;
+    background-color: #cae3ff; 
+  }
+  
+  .leaderboard-score { 
+    font-size: 40px; 
+    text-align: center; 
+  }
 }

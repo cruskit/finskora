@@ -9,7 +9,6 @@ import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import Card from 'react-bootstrap/Card';
 import Image from 'react-bootstrap/Image';
-import PinImage from './finska_pin_icon_35.png';
 import TrophyImage from './trophies.png';
 import Modal from 'react-bootstrap/Modal';
 import PlayerSelection from './PlayerSelection';
@@ -174,8 +173,15 @@ class App extends React.Component {
     // Find the current players score so we can display a toast with the value added
     console.log("Bounding box: " + JSON.stringify(this.state.scoreRefs[currentPlayer].current.getBoundingClientRect()));
     let scorePos = this.state.scoreRefs[currentPlayer].current.getBoundingClientRect();
-    let toastPosX = scorePos.x + (scorePos.width / 2) + 50;
-    let toastPosY = scorePos.y + 8;
+    
+    // Make sure we don't offset the toast too far on small screens
+    let xOffset = 50, yOffset=8;
+    if (scorePos.height < 80){
+      xOffset = 25;
+      yOffset = 4;
+    }
+    let toastPosX = scorePos.x + (scorePos.width / 2) + xOffset;
+    let toastPosY = scorePos.y + yOffset;
 
     console.log("toastPosX: " + toastPosX + ", toastPosY: " + toastPosY);
 
@@ -329,7 +335,6 @@ class LeaderBoard extends React.Component {
           <Card>
             <Card.Header className={this.getNameClass(number)}>
               {name} &nbsp;
-              <Image src={PinImage} className={number === this.props.currentPlayer ? "visible" : "invisible"} />
             </Card.Header>
             <Card.Text ref={this.props.scoreRefs[number]}
               className={this.getScoreClass(number)}
