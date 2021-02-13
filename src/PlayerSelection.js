@@ -98,7 +98,7 @@ class PlayerSelection extends React.Component {
 
     startGame() {
         console.log("Request to start game with players: " + this.state.selectedPlayers);
-
+        
         // Keep a copy of the players so they user can start with same selections
         localStorage.setItem("selectedPlayers", JSON.stringify(this.state.selectedPlayers));
         localStorage.setItem("recentPlayers", JSON.stringify(this.state.recentPlayers));

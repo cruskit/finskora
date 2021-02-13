@@ -23,7 +23,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    const newState = this.createNewGameState();
+    const newState = this.createNewGameState([]);
     newState.showWelcomePanel = true;
     newState.showSelectPlayersPanel = false;
     newState.showPlayingPanel = false;
@@ -37,23 +37,22 @@ class App extends React.Component {
   static MODE_PLAYER_SELECTION = 2; // Player selection for the game
   static MODE_SCORING = 3 // While we are playing a game and scoring
 
+  static STRIKES_UNCONFIRMED = 1; // No-one has been eliminated for three strikes yet
+  static STRIKES_APPLIED = 2; // Strike out is being applied for this game
+  static STRIKES_IGNORED = 3; // Stike out is being ignored for this game
 
   createNewGameState(playerList) {
 
     let numPlayers = 2;
     let playerNames = Array(0);
+    let activePlayerOrder = Array(0);
     let scoreRefs = Array(0);
-    if (playerList) {
-      numPlayers = playerList.length;
-      playerNames = playerList;
-    } else {
-      // TODO: Remove this once we've fixe the new game workflow
-      for (let i = 0; i < numPlayers; i++) {
-        playerNames.push(`Player ${i + 1}`);
-      }
-    }
+    numPlayers = playerList.length;
+    playerNames = playerList;
+
     const turnScores = Array(0);
     for (let i = 0; i < numPlayers; i++) {
+      activePlayerOrder[i] = i;
       turnScores.push(Array(0));
       scoreRefs.push(React.createRef());
     }
@@ -61,14 +60,17 @@ class App extends React.Component {
     let newState = {
       players: playerNames,
       playerTotals: Array(numPlayers).fill(0),
+      activePlayerOrder: activePlayerOrder,
       currentPlayer: 0,
       numTurns: 0,
       turnScores: turnScores,
       scoreRefs: scoreRefs,
       winner: -1,
+      strikeOutMode: App.STRIKES_UNCONFIRMED,
       showNewGameConfirmModal: false,
       showWinnerModal: false,
       showToast: false,
+      showStrikeoutConfirmationModal: false,
     };
 
     return newState;
@@ -136,17 +138,22 @@ class App extends React.Component {
   handleShowPinSetupModal() {
     this.setState({ showPinSetupModal: true });
   }
-  handleScoreEntered(userScore) {
+  handleScoreEntered(userScore, updatedStrikeoutMode) {
 
     console.log("Handling entered score: " + userScore);
 
-    const currentPlayer = this.state.numTurns % this.state.players.length;
+    // This is a hack because we get modal confirmation that isn't applied to the state yet
+    let strikeoutMode = updatedStrikeoutMode ? updatedStrikeoutMode : this.state.strikeOutMode;
+
+    const currentPlayer = this.state.currentPlayer;
 
     // Don't try and copy the refs as they give circular references
     const newState = JSON.parse(JSON.stringify(this.state, (key, value) => {
       return key === "scoreRefs" ? undefined : value;
     }));
     newState.scoreRefs = this.state.scoreRefs;
+    newState.strikeOutMode = strikeoutMode;
+    newState.showStrikeoutConfirmationModal = false;
 
     const turnScores = this.state.turnScores[currentPlayer];
     const currentTotal = turnScores.length === 0 ? 0 : turnScores[turnScores.length - 1].total;
@@ -162,28 +169,56 @@ class App extends React.Component {
     });
     newState.playerTotals[currentPlayer] = newTotal;
     newState.numTurns = this.state.numTurns + 1;
-    newState.currentPlayer = newState.numTurns % newState.players.length;
     newState.previousState = this.state;
+
+    // If this is the first elimination for three strikes we'll ask if applying this rule
+    if (strikeoutMode === App.STRIKES_UNCONFIRMED
+      && this.hasScoredThreeStrikes(newState.turnScores[currentPlayer])) {
+      this.promptForStrikeoutConfirmation();
+      return;
+    }
+
+
+    // Shuffle the player order so the current player is now at the end
+    const playerOrder = this.state.activePlayerOrder.slice();
+    playerOrder.push(playerOrder.shift());
+    newState.currentPlayer = playerOrder[0];
+    newState.activePlayerOrder = playerOrder;
 
     if (newTotal === 50) {
       newState.winner = currentPlayer;
       newState.showWinnerModal = true;
     }
 
-    // Find the current players score so we can display a toast with the value added
-    console.log("Bounding box: " + JSON.stringify(this.state.scoreRefs[currentPlayer].current.getBoundingClientRect()));
+    // Handle eliminations if three strikes scored
+    if (strikeoutMode === App.STRIKES_APPLIED) {
+      let isEliminated = this.hasScoredThreeStrikes(newState.turnScores[currentPlayer]);
+      if (isEliminated) {
+        console.log("Player index [" + this.state.currentPlayer + "] eliminated for 3 strikes");
+        newState.activePlayerOrder.pop();
+
+        // If only one player left then they have won
+        if (newState.activePlayerOrder.length === 1) {
+          newState.winner = newState.activePlayerOrder[0];
+          newState.showWinnerModal = true;
+        }
+      }
+    }
+
+    // Find the current player's score on screen so we can display a toast next to it with the value added
+    //console.log("Bounding box: " + JSON.stringify(this.state.scoreRefs[currentPlayer].current.getBoundingClientRect()));
     let scorePos = this.state.scoreRefs[currentPlayer].current.getBoundingClientRect();
-    
+
     // Make sure we don't offset the toast too far on small screens
-    let xOffset = 50, yOffset=8;
-    if (scorePos.height < 80){
+    let xOffset = 50, yOffset = 8;
+    if (scorePos.height < 80) {
       xOffset = 25;
       yOffset = 4;
     }
     let toastPosX = scorePos.x + (scorePos.width / 2) + xOffset;
     let toastPosY = scorePos.y + yOffset;
 
-    console.log("toastPosX: " + toastPosX + ", toastPosY: " + toastPosY);
+    //console.log("toastPosX: " + toastPosX + ", toastPosY: " + toastPosY);
 
     newState.toastPosX = toastPosX;
     newState.toastPosY = toastPosY;
@@ -194,15 +229,46 @@ class App extends React.Component {
     this.hideToastAfterDelay();
   }
 
-  hideToastAfterDelay(){
+  promptForStrikeoutConfirmation() {
+    console.log("User scored three strikes - prompting for confirmation on strikeout mode");
+    this.setState({ showStrikeoutConfirmationModal: true });
+  }
+
+  handleIgnoreStrikeouts() {
+    console.log("User specified to ignore strikeouts");
+    this.handleScoreEntered(0, App.STRIKES_IGNORED);
+  }
+
+  handleApplyStrikeouts() {
+    console.log("User specified to apply strikeouts");
+    this.handleScoreEntered(0, App.STRIKES_APPLIED);
+  }
+
+  hasScoredThreeStrikes(playerScores) {
+    if (playerScores.length < 3) {
+      return false;
+    }
+    let allStrikes = true;
+    for (let i = playerScores.length - 1; i > playerScores.length - 4; i--) {
+      if (playerScores[i].score !== 0) {
+        allStrikes = false;
+      }
+    }
+    return allStrikes;
+  }
+
+  hideToastAfterDelay() {
     setTimeout(() => {
-      this.setState({showToast: false});
+      this.setState({ showToast: false });
     }, 1000);
   }
 
   handleUndo() {
     console.log("Undoing last scoring action");
     this.setState(this.state.previousState);
+
+    // Hide the elimination modal if the user was in the process of being prompted
+    this.setState({ showStrikeoutConfirmationModal: false });
   }
 
   renderPlayingPanel() {
@@ -217,6 +283,7 @@ class App extends React.Component {
           currentPlayer={this.state.currentPlayer}
           winner={this.state.winner}
           scoreRefs={this.state.scoreRefs}
+          enabledPlayers={this.state.activePlayerOrder}
         />
 
         <br />
@@ -224,7 +291,7 @@ class App extends React.Component {
         <ScorePad
           onScoreEntered={(s) => this.handleScoreEntered(s)}
           onUndo={() => this.handleUndo()}
-          isScoringEnabled={this.state.winner === -1}
+          isScoringEnabled={this.state.winner === -1 && this.state.activePlayerOrder.length > 0}
         />
 
         <br />
@@ -304,6 +371,13 @@ class App extends React.Component {
           score={this.state.lastScore}
         />
 
+        <StrikeoutConfirmationModal
+          show={this.state.showStrikeoutConfirmationModal}
+          playerName={this.state.players[this.state.currentPlayer]}
+          onIgnore={() => this.handleIgnoreStrikeouts()}
+          onApply={() => this.handleApplyStrikeouts()}
+        />
+
       </>
     );
   }
@@ -328,6 +402,16 @@ class LeaderBoard extends React.Component {
     return "leaderboard-name";
   }
 
+  getScore(playerNum) {
+
+    if (this.props.winner === playerNum) {
+      return "Win!";
+    } else if (this.props.enabledPlayers.includes(playerNum)) {
+      return this.props.playerTotals[playerNum];
+    }
+    return "Out"
+  }
+
   renderScores() {
     const scores = this.props.playerNames.map((name, number) => {
       return (
@@ -339,7 +423,7 @@ class LeaderBoard extends React.Component {
             <Card.Text ref={this.props.scoreRefs[number]}
               className={this.getScoreClass(number)}
             >
-              {this.props.winner === number ? 'Win!' : this.props.playerTotals[number]}
+              {this.getScore(number)}
             </Card.Text>
           </Card>
         </Col>
@@ -534,6 +618,39 @@ function PinSetupModal(props) {
         <Modal.Footer className="text-center">
           <Button variant="primary" onClick={props.cancel}>
             Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+}
+
+function StrikeoutConfirmationModal(props) {
+
+  return (
+    <>
+      <Modal centered show={props.show} onHide={props.cancel}>
+        <Modal.Header className="text-center">
+          <Modal.Title>
+            <h3 className="modal-title w-100">
+              {props.playerName} has three consecutive zeros!
+            </h3>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body >
+          <p>{props.playerName} has scored three consecutive zeros and will be
+          eliminated.</p>
+          <p>To ignore the three zeros rule and allow {props.playerName} to
+          stay in the game, select "Ignore strikes" below.</p>
+          <p>Your decision on three zeros will apply for the remainder of this game.
+          </p>
+        </Modal.Body>
+        <Modal.Footer className="text-center">
+          <Button variant="primary" onClick={props.onIgnore}>
+            Ignore Strikes
+          </Button>
+          <Button onClick={props.onApply}>
+            Eliminate {props.playerName}
           </Button>
         </Modal.Footer>
       </Modal>
