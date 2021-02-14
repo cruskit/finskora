@@ -16,7 +16,10 @@ import Welcome from './Welcome';
 import PinSetupImage from './FinskaPinSetup.png';
 import Toast from 'react-bootstrap/Toast';
 
-// import ReactDom from 'react-dom';
+import ReactGA from 'react-ga';
+ReactGA.initialize('UA-56294496-2');
+ReactGA.pageview(window.location.pathname + window.location.search);
+
 
 class App extends React.Component {
 
@@ -89,6 +92,11 @@ class App extends React.Component {
     console.log("Starting game with players: " + players);
     this.setState(this.createNewGameState(players));
     this.setGameState(App.MODE_SCORING);
+
+    ReactGA.event({
+      category: "Start Game",
+      action: "User started scoring the game",
+    });
   }
 
   setGameState(state) {
