@@ -92,11 +92,6 @@ class App extends React.Component {
     console.log("Starting game with players: " + players);
     this.setState(this.createNewGameState(players));
     this.setGameState(App.MODE_SCORING);
-
-    ReactGA.event({
-      category: "Start Game",
-      action: "User started scoring the game",
-    });
   }
 
   setGameState(state) {
@@ -108,6 +103,11 @@ class App extends React.Component {
           showSelectPlayersPanel: true,
           showPlayingPanel: false,
         });
+
+        ReactGA.event({
+          category: "Game Tracking",
+          action: "Selecting players for game",
+        });
         break;
 
       case App.MODE_SCORING:
@@ -115,6 +115,11 @@ class App extends React.Component {
           showWelcomePanel: false,
           showSelectPlayersPanel: false,
           showPlayingPanel: true,
+        });
+
+        ReactGA.event({
+          category: "Game Tracking",
+          action: "Scoring started for game",
         });
         break;
 
@@ -196,6 +201,12 @@ class App extends React.Component {
     if (newTotal === 50) {
       newState.winner = currentPlayer;
       newState.showWinnerModal = true;
+
+      ReactGA.event({
+        category: "Game Tracking",
+        action: "Game has a winner",
+      });
+
     }
 
     // Handle eliminations if three strikes scored
@@ -240,16 +251,29 @@ class App extends React.Component {
   promptForStrikeoutConfirmation() {
     console.log("User scored three strikes - prompting for confirmation on strikeout mode");
     this.setState({ showStrikeoutConfirmationModal: true });
+    ReactGA.event({
+      category: "Game Tracking",
+      action: "Strikeout rule confirmation triggered",
+    });
+
   }
 
   handleIgnoreStrikeouts() {
     console.log("User specified to ignore strikeouts");
     this.handleScoreEntered(0, App.STRIKES_IGNORED);
+    ReactGA.event({
+      category: "Game Tracking",
+      action: "Strikeout rule being ignored",
+    });
   }
 
   handleApplyStrikeouts() {
     console.log("User specified to apply strikeouts");
     this.handleScoreEntered(0, App.STRIKES_APPLIED);
+    ReactGA.event({
+      category: "Game Tracking",
+      action: "Strikeout rule being enforced",
+    });
   }
 
   hasScoredThreeStrikes(playerScores) {
