@@ -368,6 +368,10 @@ class App extends React.Component {
               <Nav.Link href="#home" variant="dark" onClick={() => this.handleShowPinSetupModal()}>Pin Setup</Nav.Link>
             </Nav.Item>
           </Nav>
+          <a href="https://twitter.com/messages/compose?recipient_id=390692530"
+            class="twitter-dm-button" data-size="large" data-screen-name="@thecruskit"
+            data-text="Finskora is ">
+            Feedback @thecruskit</a>
         </Navbar>
 
         { this.state.showWelcomePanel && this.renderWelcomePanel()}

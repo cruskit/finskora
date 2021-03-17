@@ -34,7 +34,13 @@ class Welcome extends React.Component {
                 <br />
                 <br />
                 <br />
-                <br />
+                <p>
+                <a href="https://twitter.com/messages/compose?recipient_id=390692530"
+                    class="twitter-dm-button" data-size="large" data-screen-name="@thecruskit"
+                    data-text="Finskora is ">
+                    Feedback @thecruskit</a>
+
+                </p>
                 <p><small>Finskora is not affiliated or associated with <a href="https://finska.com.au">Finska</a></small></p>
             </Container>
         )
