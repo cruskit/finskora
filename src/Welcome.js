@@ -17,9 +17,8 @@ class Welcome extends React.Component {
 
                 <br />
 
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+                <button class="bg-blue-500 hover:bg-blue-700 text-white text-lg py-2 px-4 rounded-full"
                     onClick={() => this.props.onStartGame()}
-                    variant="primary btn-lg"
                 >
                     Start Scoring
                 </button>
