@@ -1,8 +1,5 @@
 import React from 'react';
 import './PlayerSelection.css';
-import Container from 'react-bootstrap/Container';
-import Button from 'react-bootstrap/Button'
-import Image from 'react-bootstrap/Image'
 import PinSetupImage from './FinskaPinSetup.png';
 
 class Welcome extends React.Component {
@@ -10,7 +7,7 @@ class Welcome extends React.Component {
 
     render() {
         return (
-            <Container fluid className="text-center">
+            <div class="items-center justify-center text-center">
 
                 <br />
                 <h1>Finskora</h1>
@@ -20,17 +17,17 @@ class Welcome extends React.Component {
 
                 <br />
 
-                <Button
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
                     onClick={() => this.props.onStartGame()}
                     variant="primary btn-lg"
                 >
                     Start Scoring
-                </Button>
+                </button>
 
                 <br />
 
                 <br />
-                <Image src={PinSetupImage} />
+                <img class="mx-auto" src={PinSetupImage} alt="Pin Setup" />
                 <br />
                 <br />
                 <br />
@@ -42,7 +39,7 @@ class Welcome extends React.Component {
 
                 </p>
                 <p><small>Finskora is not affiliated or associated with <a href="https://finska.com.au">Finska</a></small></p>
-            </Container>
+            </div>
         )
     }
 
