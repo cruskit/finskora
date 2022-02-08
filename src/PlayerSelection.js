@@ -142,33 +142,33 @@ class PlayerSelection extends React.Component {
     displaySelectedPlayers() {
 
         if (this.state.selectedPlayers.length === 0) {
-            return (<li key="noPlayers" className="list-group-item"><h3>Please add some players</h3></li>);
+            return (<li key="noPlayers" className=""><h3>Please add some players</h3></li>);
         }
 
         const playerList = this.state.selectedPlayers.map((name, number) => {
             return (
-                <li key={name} className="list-group-item d-flex justify-content-between align-items-center">
-                    <h2>
-                        {name}
-                    </h2>
-                        &nbsp; &nbsp; &nbsp;
-                    <span className="badge">
+                <li key={name} className="mb-2.5 text-xl font-medium p-2 pl-4 border-sky-500 border rounded-full shadow">
+                    <div className="flex justify-between">
 
-                        <span className={number === 0 ? "invisible" : "visible"}>
-                            &nbsp; <span className="iconoo-caretUpCircle"
-                                onClick={() => this.movePlayer(number, -1)}></span>
-                        </span>
-                        &nbsp; &nbsp;
-                        <span className={number === this.state.selectedPlayers.length - 1 ? "invisible" : "visible"}>
-                            <span className="iconoo-caretDownCircle"
-                                onClick={() => this.movePlayer(number, 1)}></span>
-                        </span>
-                        &nbsp; &nbsp;
-                        <span className="iconoo-crossCircle"
-                            onClick={() => this.deletePlayer(number)}></span>
+                        <div className="text-xl">
+                        {name}&nbsp;&nbsp;
+                        </div>
 
-
-                    </span>
+                        <div>
+                            <span className={number === 0 ? "invisible" : "visible"}>
+                                &nbsp; <span className="iconoo-caretUpCircle"
+                                    onClick={() => this.movePlayer(number, -1)}></span>
+                            </span>
+                            &nbsp; &nbsp;
+                            <span className={number === this.state.selectedPlayers.length - 1 ? "invisible" : "visible"}>
+                                <span className="iconoo-caretDownCircle"
+                                    onClick={() => this.movePlayer(number, 1)}></span>
+                            </span>
+                            &nbsp; &nbsp;
+                            <span className="iconoo-crossCircle"
+                                onClick={() => this.deletePlayer(number)}></span>
+                        </div>
+                    </div>
                 </li>
             );
         });
@@ -198,32 +198,32 @@ class PlayerSelection extends React.Component {
 
     render() {
         return (
-            <Container>
+            <div class="items-center justify-center text-center">
                 <br />
-                <Row>
-                    <Col>
+                <div class="flex flex-row justify-between ">
                         <h1>Players for this game</h1>
-                    </Col>
-                    <Col>
-                        <Button variant="primary btn-lg" onClick={() => this.startGame()}>
-                            Start Game
-                        </Button>
-                        &nbsp; &nbsp;
-                        <Button variant="primary btn-lg" onClick={() => this.shufflePlayers()}>
-                            Shuffle Players
-                        </Button>
-                    </Col>
-                </Row>
+
+                        <span className="">
+                            <Button variant="primary btn-lg" onClick={() => this.startGame()}>
+                                Start Game
+                            </Button>
+                            &nbsp; &nbsp;
+                            <Button variant="primary btn-lg" onClick={() => this.shufflePlayers()}>
+                                Shuffle Players
+                            </Button>
+                        </span>
+
+                </div>
 
                 <br />
 
-                <Row>
-                    <ul className="list-item">
+                <div className="flex">
+                    <ul className="">
                         <FlipMove>
                             {this.displaySelectedPlayers()}
                         </FlipMove>
                     </ul>
-                </Row>
+                </div>
 
                 <br />
 
@@ -243,16 +243,16 @@ class PlayerSelection extends React.Component {
                     </Form.Row>
                 </Form>
                 <br />
-                <Row>
-                    <h3>Recent Players</h3>
-                </Row>
+                <h3>Recent Players</h3>
                 <br />
-                <Row>
+                <div className="flex">
                     <ul className="list-item">
                         {this.displayRecentPlayers()}
                     </ul>
-                </Row>
-            </Container>
+                </div>
+                <br />
+                
+            </div>
         );
     }
 
