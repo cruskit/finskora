@@ -147,10 +147,10 @@ class PlayerSelection extends React.Component {
 
         const playerList = this.state.selectedPlayers.map((name, number) => {
             return (
-                <li key={name} className="mb-2.5 text-xl font-medium p-2 pl-4 border-sky-500 border rounded-full shadow">
+                <li key={name} className="mb-2.5 font-medium p-2 pl-4 border-sky-500 border rounded-full shadow">
                     <div className="flex justify-between">
 
-                        <div className="text-xl">
+                        <div className="text-2xl">
                         {name}&nbsp;&nbsp;
                         </div>
 
