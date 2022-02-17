@@ -1,11 +1,6 @@
 import React from 'react';
 import './iconoo.min.css';
 import './PlayerSelection.css';
-import Container from 'react-bootstrap/Container';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import FlipMove from 'react-flip-move';
 class PlayerSelection extends React.Component {
 
@@ -147,10 +142,10 @@ class PlayerSelection extends React.Component {
 
         const playerList = this.state.selectedPlayers.map((name, number) => {
             return (
-                <li key={name} className="mb-2.5 font-medium p-2 pl-4 border-sky-500 border rounded-full shadow">
+                <li key={name} className="mb-2.5 font-medium p-2 pl-4 border-sky-500 border rounded-full shadow-md">
                     <div className="flex justify-between">
 
-                        <div className="text-2xl">
+                        <div className="text-3xl">
                         {name}&nbsp;&nbsp;
                         </div>
 
@@ -183,13 +178,15 @@ class PlayerSelection extends React.Component {
 
         const recentPlayerList = this.state.recentPlayers.map((name, number) => {
             return (
-                <li key={name} className="list-group-item d-flex justify-content-between align-items-center">
-                    <h3>{name}</h3>
-                    &nbsp; &nbsp; &nbsp;
-                    <span className="badge">
+                <li key={name} className="mb-2.5 font-medium p-2 pl-4 border-sky-500 border rounded-full shadow-md">
+
+                    <div className="flex justify-between">
+                        <div className="text-3xl">
+                            {name}&nbsp;&nbsp;
+                        </div>
                         <span className="iconoo-plusCircle"
                             onClick={() => this.addFromRecentPlayers(number)}></span>
-                    </span>
+                    </div>
                 </li>
             );
         });
@@ -200,53 +197,52 @@ class PlayerSelection extends React.Component {
         return (
             <div class="items-center justify-center text-center">
                 <br />
-                <div class="flex flex-row justify-between ">
-                        <h1>Players for this game</h1>
+                <div class="flex flex-row justify-center ">
+                        <h1>Players</h1>
 
-                        <span className="">
-                            <Button variant="primary btn-lg" onClick={() => this.startGame()}>
-                                Start Game
-                            </Button>
-                            &nbsp; &nbsp;
-                            <Button variant="primary btn-lg" onClick={() => this.shufflePlayers()}>
-                                Shuffle Players
-                            </Button>
-                        </span>
 
                 </div>
 
                 <br />
 
-                <div className="flex">
-                    <ul className="">
+                <div className="flex justify-center">
+                    <ul>
                         <FlipMove>
                             {this.displaySelectedPlayers()}
                         </FlipMove>
                     </ul>
                 </div>
 
-                <br />
-
-                <Form onSubmit={e => e.preventDefault()}>
-                    <Form.Row>
-                        <Col>
-                            <Form.Control size="lg" type="text" placeholder="New Player Name"
+                <form onSubmit={e => e.preventDefault()}>
+                            <input type="text" placeholder="New Player Name"
                                 value={this.state.newPlayerName}
                                 onChange={(e) => this.setState({ newPlayerName: e.target.value })}
                             />
-                        </Col>
-                        <Col>
-                            <Button variant="primary" className="btn-lg" type="submit" onClick={() => this.addPlayer()}>
-                                Add Player
-                            </Button>
-                        </Col>
-                    </Form.Row>
-                </Form>
+                            <button type="submit" onClick={() => this.addPlayer()}
+                                class="text-xl font-medium h-10 px-3 m-2 text-white transition-colors duration-150 bg-blue-500 rounded-lg focus:shadow-outline hover:bg-blue-700">
+                                Add
+                            </button>
+                </form>
+
+                <br />
+
+                <div>
+                        <button onClick={() => this.startGame()}
+                            class="text-xl font-medium h-10 px-5 m-2 text-white transition-colors duration-150 bg-blue-500 rounded-lg focus:shadow-outline hover:bg-blue-700">
+                            Start Game
+                        </button>
+                        &nbsp; &nbsp;
+                        <button onClick={() => this.shufflePlayers()}
+                            class="text-xl font-medium h-10 px-5 m-2 text-white transition-colors duration-150 bg-blue-500 rounded-lg focus:shadow-outline hover:bg-blue-700">
+                            Shuffle Players
+                        </button>
+                </div>
+
                 <br />
                 <h3>Recent Players</h3>
                 <br />
-                <div className="flex">
-                    <ul className="list-item">
+                <div className="flex justify-center">
+                    <ul>
                         {this.displayRecentPlayers()}
                     </ul>
                 </div>
