@@ -198,7 +198,7 @@ class PlayerSelection extends React.Component {
             <div class="items-center justify-center text-center">
                 <br />
                 <div class="flex flex-row justify-center ">
-                        <h1>Players</h1>
+                        <h1>Select Players</h1>
 
 
                 </div>
@@ -214,27 +214,27 @@ class PlayerSelection extends React.Component {
                 </div>
 
                 <form onSubmit={e => e.preventDefault()}>
-                            <input type="text" placeholder="New Player Name"
-                                value={this.state.newPlayerName}
-                                onChange={(e) => this.setState({ newPlayerName: e.target.value })}
-                            />
-                            <button type="submit" onClick={() => this.addPlayer()}
-                                class="text-xl font-medium h-10 px-3 m-2 text-white transition-colors duration-150 bg-blue-500 rounded-lg focus:shadow-outline hover:bg-blue-700">
-                                Add
-                            </button>
+                    <input type="text" placeholder="New Player Name" 
+                        value={this.state.newPlayerName}
+                        onChange={(e) => this.setState({ newPlayerName: e.target.value })}
+                    />
+                    <button type="submit" onClick={() => this.addPlayer()}
+                        class="text-xl font-medium h-10 px-3 m-2 text-white transition-colors duration-150 bg-blue-500 rounded-lg focus:shadow-outline hover:bg-blue-700">
+                        Add
+                    </button>
+
+                        <button onClick={() => this.shufflePlayers()}
+                            class="text-xl font-medium h-10 px-3 m-2 text-white transition-colors duration-150 bg-blue-500 rounded-lg focus:shadow-outline hover:bg-blue-700">
+                            Shuffle
+                        </button>
                 </form>
 
                 <br />
 
                 <div>
                         <button onClick={() => this.startGame()}
-                            class="text-xl font-medium h-10 px-5 m-2 text-white transition-colors duration-150 bg-blue-500 rounded-lg focus:shadow-outline hover:bg-blue-700">
+                            class="text-2xl font-bold h-14 px-5 m-2 text-white text-opacity-25 transition-colors duration-150 bg-blue-500 rounded-lg focus:shadow-outline hover:bg-blue-700">
                             Start Game
-                        </button>
-                        &nbsp; &nbsp;
-                        <button onClick={() => this.shufflePlayers()}
-                            class="text-xl font-medium h-10 px-5 m-2 text-white transition-colors duration-150 bg-blue-500 rounded-lg focus:shadow-outline hover:bg-blue-700">
-                            Shuffle Players
                         </button>
                 </div>
 
